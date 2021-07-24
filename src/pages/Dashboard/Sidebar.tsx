@@ -1,5 +1,6 @@
+import useAuth from "hooks/useAuth";
 import { FC, ReactElement } from "react"
-import { useHistory, useLocation, useRouteMatch } from "react-router-dom"
+import { useHistory, useLocation, useRouteMatch, Redirect } from "react-router-dom"
 import { Sidenav, Nav, Icon } from 'rsuite'
 import SidebarHeader, { Username, UserName } from "../../components/SidebarHeader";
 
@@ -7,13 +8,17 @@ const Sidebar: FC = (): ReactElement => {
   const { pathname } = useLocation();
   const { path } = useRouteMatch();
   const { push } = useHistory();
+  const {login, user} = useAuth();
 
   return (
+    !login ?
+    <Redirect to="/login" />
+    :
     <Sidenav appearance="inverse" onSelect={push} style={{ height: '100%' }} activeKey={pathname}>
       <Sidenav.Header>
         <SidebarHeader>
-          <UserName>User</UserName>
-          <Username>username</Username>
+          <UserName>{user?.name}</UserName>
+          <Username>{user?.username}</Username>
         </SidebarHeader>
       </Sidenav.Header>
       <Sidenav.Body>

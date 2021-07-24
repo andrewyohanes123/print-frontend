@@ -3,7 +3,7 @@ import {Loader} from 'rsuite'
 import { Switch, Route, useRouteMatch } from 'react-router-dom'
 import FullscreenDiv, { Header, SubHeader } from 'components/FullscreenDiv';
 
-const Clothes = lazy(() => import('../Clothes'));
+const Clothes = lazy(() => import('../Clothes/Routes'));
 const DashboardHomePage = lazy(() => import('../DashboardHomePage'));
 const Orders = lazy(() => import('../Orders'));
 

@@ -4,7 +4,7 @@ import Routes from "./Routes"
 import Sidebar from './Sidebar'
 
 const Layout: FC = (): ReactElement => {
-  document.title = "Dashboard"
+  document.title = "T-Design | Dashboard"
   return (
     <Container style={{ height: '100%' }}>
       <SideBar style={{ display: 'flex', flexDirection: 'column' }}>

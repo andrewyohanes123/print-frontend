@@ -1,4 +1,5 @@
 import ModelInstance from "@edgarjeremy/sirius.adapter/dist/libs/ModelInstance";
+import { ICollectionResult } from "@edgarjeremy/sirius.adapter/dist/libs/Utility";
 
 
 export interface AboutAttributes extends ModelInstance {
@@ -75,4 +76,9 @@ export interface UserAttributes extends ModelInstance {
 	password: string;
 	created_at?: Date;
 	updated_at?: Date;
+}
+
+export interface ModelCollectionResult<T extends ModelInstance> extends ICollectionResult {
+  rows: T[],
+  count: number;
 }
