@@ -11,7 +11,6 @@ export interface AboutAttributes extends ModelInstance {
 export interface ClothAttributes extends ModelInstance {
 	name: string;
   price: number;
-	brand_id?: number;
 	created_at?: Date;
 	updated_at?: Date;
 }
@@ -24,7 +23,8 @@ export interface ClothSideAttributes extends ModelInstance {
 	updated_at?: Date;
 }
 
-export interface ColorAttributes extends ModelInstance {
+export interface ColorAttributes {
+	id?: number;
   name: string;
 	color: string;
 	created_at?: Date;
@@ -35,20 +35,18 @@ export interface OrderAttributes extends ModelInstance {
 	name: string;
   email: string;
   phone: string;
-  design_width: number;
-  design_height: number;
-  design_file: string;
   confirmed?: boolean;
   order_number: string;
 	created_at?: Date;
 	updated_at?: Date;
 }
 
-export interface OrderClothSideAttributes extends ModelInstance {
-  design_x: number;
-  design_y: number;
+export interface OrderClothSideAttributes {
+  id?: number;
+  design_file: string;
   design_width: number;
   design_height: number;
+  mockup_file: string;
   order_id?: number;
   cloth_side_id?: number;
   created_at?: Date;
