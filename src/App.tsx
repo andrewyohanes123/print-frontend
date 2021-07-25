@@ -19,6 +19,8 @@ const { REACT_APP_IP_ADDRESS, REACT_APP_PORT }: NodeJS.ProcessEnv = process.env;
 
 const Connect = new Adapter(REACT_APP_IP_ADDRESS!, parseInt(REACT_APP_PORT!), localStorage);
 
+export const baseUrl: string = `${REACT_APP_IP_ADDRESS}:${REACT_APP_PORT}`;
+
 function App() {
   const [localModels, setLocalModels] = useState<IModelFactory>({});
   const [ready, toggleReady] = useState<boolean>(false);

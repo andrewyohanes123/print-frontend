@@ -4,11 +4,13 @@ import { Button, Divider, FlexboxGrid } from 'rsuite'
 import useImage from "use-image";
 import { Transformer } from "konva/lib/shapes/Transformer";
 import { Image } from "konva/lib/shapes/Image";
-import { SliderPicker } from 'react-color'
+import { CirclePicker } from 'react-color'
 import front from 'assets/front.png';
 import bg from 'assets/background-front.png';
 import logo from 'assets/coffee.png'
 import { KonvaEventObject } from "konva/lib/Node";
+import useModels from "hooks/useModels";
+import useErrorCatcher from "hooks/useErrorCatcher";
 
 const Canvas: FC = (): ReactElement => {
   const [cloth] = useImage(front);
@@ -16,10 +18,27 @@ const Canvas: FC = (): ReactElement => {
   const [coffee] = useImage(logo);
   const trRef = useRef<Transformer>(null);
   const imgRef = useRef<Image>(null);
-  const [clothColor, setClothColor] = useState<string>('red');
+  const [clothColor, setClothColor] = useState<string>('white');
   const [preview, togglePreview] = useState<boolean>(false);
   const [coords, setCoords] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
   const [scale, setScale] = useState<{ width: number; height: number }>({ width: 400, height: 400 });
+  const [colors, setColors] = useState<string[]>(['white']);
+  const { models: { Color } } = useModels();
+  const {errorCatch} = useErrorCatcher();
+
+  const getColors = useCallback(() => {
+    Color.collection({
+      attributes: ['color'],
+    }).then(resp => {
+      setColors(resp.rows.map(color => (color.color)));
+    }).catch(e => {
+      errorCatch(e);
+    })
+  }, [errorCatch, Color]);
+
+  useEffect(() => {
+    getColors();
+  }, [getColors]);
 
   useEffect(() => {
     if (trRef.current !== null && imgRef.current !== null && !preview) {
@@ -70,7 +89,7 @@ const Canvas: FC = (): ReactElement => {
       </Stage>
       <Divider />
       <Button style={{ marginBottom: 8 }} onClick={() => togglePreview(!preview)} appearance="primary" block>{preview ? "Edit Mockup" : `Preview Mockup`}</Button>
-      <SliderPicker color={clothColor} onChangeComplete={ev => setClothColor(ev.hex)} />
+      <CirclePicker circleSpacing={20} circleSize={35} width="100%" colors={colors} color={clothColor} onChangeComplete={ev => setClothColor(ev.hex)} />
     </FlexboxGrid.Item>
   )
 }

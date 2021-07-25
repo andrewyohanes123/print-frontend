@@ -7,13 +7,13 @@ import { GlobalModelsProvider } from 'contexts/ModelsContext';
 import { UserProvider } from 'contexts/UserContext';
 
 ReactDOM.render(
-  <React.StrictMode>
+  <React.Fragment>
     <GlobalModelsProvider>
       <UserProvider>
         <App />
       </UserProvider>
     </GlobalModelsProvider>
-  </React.StrictMode>,
+  </React.Fragment>,
   document.getElementById('root')
 );
 

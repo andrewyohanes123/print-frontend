@@ -38,7 +38,8 @@ const ClothList: FC<props> = ({ clothes, pagination: { total, limit, page, onSel
                 {
                   clothes.map(cloth => (
                     <Panel key={cloth.id} style={{ marginBottom: 10, marginTop: 10 }} bordered>
-                      <Link to={`${path}/${cloth.id}`}>{cloth.name}</Link>
+                      <h4><Link to={`${path}/${cloth.id}`}>{cloth.name}</Link></h4>
+                      <p><small>Rp. {cloth.price}</small></p>
                     </Panel>
                   ))
                 }

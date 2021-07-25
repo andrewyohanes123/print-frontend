@@ -19,7 +19,7 @@ const Layout: FC = (): ReactElement => {
     toggleLoading(true);
     const offset = (page - 1) * limit;
     Cloth.collection({
-      attributes: ['name'],
+      attributes: ['name', 'price'],
       limit, offset,      
     }).then((resp) => {
       toggleLoading(false);
