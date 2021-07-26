@@ -28,7 +28,7 @@ const Layout: FC = (): ReactElement => {
       errorCatch(e);
     })
   }, [Cloth, id, errorCatch]);
-  
+
   useEffect(() => {
     getCloth();
   }, [id, getCloth]);
@@ -82,7 +82,7 @@ const Layout: FC = (): ReactElement => {
           <SubHeader style={{ color: '#abbcd5' }}>mengambil detail pakaian</SubHeader>
         </FullscreenDiv>
         :
-        <Container>
+        <Container height="calc(100% - 105px)">
           <AddClothSide onSubmit={createClothSide} />
           <SideLists sides={sides.rows} loading={loading} />
         </Container>

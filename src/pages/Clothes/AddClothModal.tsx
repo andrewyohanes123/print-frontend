@@ -54,7 +54,7 @@ const AddClothModal: FC<props> = ({ onSubmit }): ReactElement => {
               </InputGroup>
             </FormGroup>
             <FormGroup>
-              <Button loading={loading} type="submit">Tambah</Button>
+              <Button loading={loading}color="green" type="submit">Tambah</Button>
             </FormGroup>
           </Form>
         </Modal.Body>
