@@ -48,12 +48,12 @@ const AddClothModal: FC<props> = ({ onSubmit, cloth, onExited }): ReactElement =
 
   return (
     <>
-      <Button onClick={() => toggleModal(true)}>Tambah Kaos</Button>
+      <Button color="green" onClick={() => toggleModal(true)}>Tambah Data Pakaian</Button>
       <Modal onExited={onExited} show={modal} onHide={() => toggleModal(false)}>
         {typeof cloth !== 'undefined' ?
           <Modal.Header>Edit Data {cloth.name}</Modal.Header>
           :
-          <Modal.Header>Tambah Data Kaos</Modal.Header>
+          <Modal.Header>Tambah Data Pakaian</Modal.Header>
         }
         <Modal.Body>
           {/* @ts-ignore */}

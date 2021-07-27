@@ -1,6 +1,6 @@
 import Container from "components/Container"
 import FullscreenDiv from "components/FullscreenDiv"
-import { FC, ReactElement, Fragment, useContext } from "react"
+import { FC, ReactElement, useContext } from "react"
 import { FlexboxGrid, Icon, Panel } from 'rsuite'
 import { EditorContext } from "."
 import Canvas from "./Canvas"
@@ -16,7 +16,7 @@ const Layout: FC = (): ReactElement => {
   const { step, cloth_id } = useContext(EditorContext);
 
   return (
-    <Fragment>
+    <>
       <Container>
         <FlexboxGrid justify="center">
           <FlexboxGrid.Item style={{ marginRight: 10 }} colspan={10}>
@@ -50,7 +50,7 @@ const Layout: FC = (): ReactElement => {
           }
         </FlexboxGrid>
       </Container>
-    </Fragment>
+    </>
   )
 }
 

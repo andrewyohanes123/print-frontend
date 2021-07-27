@@ -52,7 +52,7 @@ const AddClothSide: FC<props> = ({ onSubmit }): ReactElement => {
 
   return (
     <>
-      <Button onClick={() => toggleModal(true)}>Tambah Sisi Pakaian</Button>
+      <Button color="green" onClick={() => toggleModal(true)}>Tambah Sisi Pakaian</Button>
       <Modal show={modal} onHide={() => toggleModal(false)}>
         <Modal.Header>Tambah Sisi Pakaian</Modal.Header>
         <Modal.Body>
