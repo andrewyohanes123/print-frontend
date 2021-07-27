@@ -5,7 +5,6 @@ import useImage from "use-image";
 import { Transformer } from "konva/lib/shapes/Transformer";
 import { Image } from "konva/lib/shapes/Image";
 import { CirclePicker } from 'react-color'
-import logo from 'assets/coffee.png'
 import { KonvaEventObject } from "konva/lib/Node";
 import useModels from "hooks/useModels";
 import useErrorCatcher from "hooks/useErrorCatcher";
@@ -14,7 +13,6 @@ import { baseUrl } from "App";
 import CanvasImage from "./CanvasImage";
 
 const Canvas: FC = (): ReactElement => {
-  const [coffee] = useImage(logo);
   const trRef = useRef<Transformer>(null);
   const imgRef = useRef<Image>(null);
   const [clothBase, setClothBase] = useState<string>('');
@@ -26,9 +24,10 @@ const Canvas: FC = (): ReactElement => {
   const [coords, setCoords] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
   const [scale, setScale] = useState<{ width: number; height: number }>({ width: 400, height: 400 });
   const [colors, setColors] = useState<string[]>(['white']);
+  const [loading, toggleLoading] = useState<boolean>(false);
   const { models: { Color, ClothSide } } = useModels();
   const { errorCatch } = useErrorCatcher();
-  const { cloth_id } = useContext(EditorContext);
+  const { cloth_id, cloth_side_id } = useContext(EditorContext);
 
   const getColors = useCallback(() => {
     Color.collection({
@@ -40,27 +39,31 @@ const Canvas: FC = (): ReactElement => {
     })
   }, [errorCatch, Color]);
 
-  const getFirstClothSide = useCallback(() => {
+  const getClothSide = useCallback(() => {
     if (typeof cloth_id !== 'undefined') {
+      toggleLoading(true);
       ClothSide.collection({
         limit: 1,
         attributes: ['cloth_base', 'cloth_background', 'cloth_id'],
         where: {
-          cloth_id
+          cloth_id,
+          id: cloth_side_id
         }
       }).then(resp => {
+        toggleLoading(false);
         const [side] = resp.rows;
         setClothBase(`${baseUrl}/public/files/${side.cloth_base}`);
         setClothBackground(`${baseUrl}/public/files/${side.cloth_background}`);
       }).catch(e => {
+        toggleLoading(false);
         errorCatch(e);
       })
     }
-  }, [cloth_id, errorCatch]);
+  }, [cloth_id, errorCatch, ClothSide, cloth_side_id]);
 
   useEffect(() => {
-    getFirstClothSide();
-  }, [getFirstClothSide])
+    getClothSide();
+  }, [getClothSide])
 
   useEffect(() => {
     getColors();
@@ -112,22 +115,22 @@ const Canvas: FC = (): ReactElement => {
       <div ref={flexBoxRef}>
         <Stage width={canvasSize} height={canvasSize}>
           <Layer>
-            <Rect width={640} height={800} fill={clothColor} />
+            {!loading && <Rect width={640} height={800} fill={clothColor} />}
             {preview &&
               <>
-                <Img draggable {...coords} image={coffee} {...scale} />
+                {/* <Img draggable {...coords} image={coffee} {...scale} /> */}
               </>}
-            <CanvasImage src={clothBase} key={clothBase} globalCompositeOperation="overlay" opacity={0.45} canvasSize={canvasSize} />
-            <CanvasImage src={clothBase} globalCompositeOperation="multiply" opacity={0.8} canvasSize={canvasSize} />
-            <CanvasImage src={clothBackground} key={clothBackground} canvasSize={canvasSize} />
+            {clothBase.length > 0 && <CanvasImage src={clothBase} key={clothBase} globalCompositeOperation="overlay" opacity={0.45} canvasSize={canvasSize} />}
+            {clothBase.length > 0 && <CanvasImage src={clothBase} globalCompositeOperation="multiply" opacity={0.8} canvasSize={canvasSize} />}
+            {clothBackground.length > 0 && <CanvasImage src={clothBackground} key={clothBackground} canvasSize={canvasSize} />}
             {/* <Img width={canvasSize} height={canvasSize} globalCompositeOperation="overlay" opacity={0.3} image={cloth} /> */}
             {/* <Img width={canvasSize} height={canvasSize} globalCompositeOperation="multiply" opacity={0.75} image={cloth} /> */}
             {/* <Img width={canvasSize} height={canvasSize} image={background} /> */}
           </Layer>
           {!preview && <Layer>
             <>
-              <Img draggable onDragEnd={onDragEnd} onTransformEnd={onTransformEnd} ref={imgRef} image={coffee} {...coords} {...scale} />
-              <Tr ref={trRef} />
+              {/* <Img draggable onDragEnd={onDragEnd} onTransformEnd={onTransformEnd} ref={imgRef} image={coffee} {...coords} {...scale} />
+              <Tr ref={trRef} /> */}
             </>
           </Layer>}
         </Stage>

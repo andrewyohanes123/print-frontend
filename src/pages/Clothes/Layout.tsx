@@ -12,6 +12,7 @@ const Layout: FC = (): ReactElement => {
   const [limit] = useState<number>(10);
   const [loading, toggleLoading] = useState<boolean>(false);
   const [retryCount, setRetryCount] = useState<number>(0);
+  const [cloth, setCloth] = useState<ClothAttributes | undefined>(undefined);
   const { models: { Cloth } } = useModels();
   const { errorCatch } = useErrorCatcher();
 
@@ -31,6 +32,18 @@ const Layout: FC = (): ReactElement => {
     })
   }, [Cloth, errorCatch, limit, page]);
 
+  const updateCloth = useCallback((val: {name: string; price: number}, cb: () => void) => {
+    if (typeof cloth !== 'undefined') {
+      cloth.update({...val}).then(resp => {
+        Alert.success(`Jenis pakaian ${resp.name} berhasil diubah`);
+        getClothes();
+        cb();
+      }).catch(e => {
+        errorCatch(e);
+      })
+    }
+  }, [cloth, getClothes, errorCatch])
+
   useEffect(() => {
     if (retryCount < 5) {
       getClothes();
@@ -38,23 +51,23 @@ const Layout: FC = (): ReactElement => {
     // eslint-disable-next-line
   }, [getClothes, retryCount, limit, page]);
 
-  const createCloth = useCallback((val: {name: string;}, cb: () => void) => {
+  const createCloth = useCallback((val: {name: string; price: number}, cb: () => void) => {
     Cloth.create({
       ...val,
     }).then(resp => {
-      Alert.success(`Jenis Kaos ${resp.name} berhasil ditambah`);
+      Alert.success(`Jenis pakaian ${resp.name} berhasil ditambah`);
       cb();
       getClothes();
     }).catch(e => {
       cb();
       errorCatch(e);
     })
-  },[errorCatch, Cloth, getClothes])
+  },[errorCatch, Cloth, getClothes]);
 
   return (
     <>
-      <AddClothModal onSubmit={createCloth} />
-      <ClothList clothes={cloths.rows} loading={loading} pagination={{ limit, page, total: cloths.count, onSelect: setPage }} />
+      <AddClothModal onExited={() => setCloth(undefined)} cloth={cloth} onSubmit={cloth ? updateCloth : createCloth} />
+      <ClothList onEdit={setCloth} clothes={cloths.rows} loading={loading} pagination={{ limit, page, total: cloths.count, onSelect: setPage }} />
     </>
   )
 }

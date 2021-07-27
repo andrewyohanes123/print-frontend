@@ -29,6 +29,13 @@ export interface ClothSideAttributes extends ModelInstance {
 	updated_at?: Date;
 }
 
+export interface RawClothSideAttributes {
+  id: number;
+	name: string;
+  cloth_base: string;
+  cloth_background: string;
+}
+
 export interface ColorAttributes {
 	id?: number;
   name: string;
@@ -51,6 +58,8 @@ export interface OrderClothSideAttributes extends ModelInstance {
   design_file: string;
   design_width: number;
   design_height: number;
+  design_x: number;
+  design_y: number;
   mockup_file: string;
   order_id?: number;
   cloth_side_id?: number;
@@ -62,7 +71,9 @@ export interface RawOrderClothSideAttributes {
   design_file: File;
   design_width: number;
   design_height: number;
-  mockup_file: string;
+  design_x: number;
+  design_y: number;
+  mockup_file?: string;
   cloth_side_id?: number;
   created_at?: Date;
   updated_at?: Date;

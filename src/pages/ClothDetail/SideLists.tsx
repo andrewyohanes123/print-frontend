@@ -9,9 +9,10 @@ interface props {
   sides: ClothSideAttributes[],
   loading?: boolean;
   onAddSide?: () => void;
+  onDelete?: (side: ClothSideAttributes) => void;
 }
 
-const SideLists: FC<props> = ({ sides, loading, onAddSide }): ReactElement => {
+const SideLists: FC<props> = ({ sides, loading, onAddSide, onDelete }): ReactElement => {
   return (
     loading ?
       <Loading />
@@ -34,7 +35,7 @@ const SideLists: FC<props> = ({ sides, loading, onAddSide }): ReactElement => {
                           </Whisper>
                           <Divider vertical />
                           <Whisper placement="topEnd" trigger="hover" speaker={<Tooltip>Hapus {side.name}</Tooltip>}>
-                            <IconButton color="red" icon={<Icon icon="trash" />} />
+                            <IconButton onClick={() => onDelete ? onDelete(side) : console.log('object')} color="red" icon={<Icon icon="trash" />} />
                           </Whisper>
                         </Panel>
                       </Panel>

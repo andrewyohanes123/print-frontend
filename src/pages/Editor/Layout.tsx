@@ -1,16 +1,19 @@
 import Container from "components/Container"
+import FullscreenDiv from "components/FullscreenDiv"
 import { FC, ReactElement, Fragment, useContext } from "react"
-import { FlexboxGrid } from 'rsuite'
+import { FlexboxGrid, Icon, Panel } from 'rsuite'
 import { EditorContext } from "."
 import Canvas from "./Canvas"
 import ClothLists from "./ClothLists"
+import ClothSide from "./ClothSide"
 import FormSection from "./FormSection"
 import Header from "./Header"
 import Step from "./Step"
+import Uploader from "./Uploader"
 
 const Layout: FC = (): ReactElement => {
 
-  const {cloth_id} = useContext(EditorContext);
+  const { step, cloth_id } = useContext(EditorContext);
 
   return (
     <Fragment>
@@ -19,13 +22,32 @@ const Layout: FC = (): ReactElement => {
           <FlexboxGrid.Item style={{ marginRight: 10 }} colspan={10}>
             <Header />
             <Step />
-            {typeof cloth_id === 'undefined' ?
+            {step === 0 ?
               <ClothLists />
               :
-              <FormSection />
+              step === 1 ?
+                <>
+                  <ClothSide />
+                  <Uploader />
+                </>
+                :
+                <FormSection />
             }
           </FlexboxGrid.Item>
-          <Canvas />
+          {
+            typeof cloth_id !== 'undefined' ?
+              <Canvas />
+              :
+              <FlexboxGrid.Item style={{ height: '100%' }} colspan={11} >
+                <Panel bordered>
+                  <FullscreenDiv style={{ height: 350 }} flex={true} alignItems="center" justifyContent="center" background="white" flexDirection="column" draggable={false}>
+                    <Icon icon="suitcase" size="5x" />
+                    <h4>Pilih Pakaian</h4>
+                    <p className="secondary-text"><small>Silakan pilih pakaian pada daftar pakaian</small></p>
+                  </FullscreenDiv>
+                </Panel>
+              </FlexboxGrid.Item>
+          }
         </FlexboxGrid>
       </Container>
     </Fragment>

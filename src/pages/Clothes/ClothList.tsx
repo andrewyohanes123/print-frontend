@@ -1,5 +1,5 @@
 import { FC, ReactElement, useMemo } from "react"
-import { List, Loader, Pagination, Panel } from "rsuite"
+import { List, Loader, Pagination, Panel, FlexboxGrid, Button, Icon, IconButton, Divider, Whisper, Tooltip } from "rsuite"
 import { Link, useRouteMatch } from 'react-router-dom'
 import { ClothAttributes } from "types"
 import FullscreenDiv, { Header, SubHeader } from "components/FullscreenDiv";
@@ -10,9 +10,10 @@ interface props {
   clothes: ClothAttributes[],
   pagination: pagination;
   loading?: boolean;
+  onEdit: (cloth: ClothAttributes) => void;
 }
 
-const ClothList: FC<props> = ({ clothes, pagination: { total, limit, page, onSelect }, loading }): ReactElement => {
+const ClothList: FC<props> = ({ clothes, pagination: { total, limit, page, onSelect }, loading, onEdit }): ReactElement => {
   const { path } = useRouteMatch();
   const totalPages: number | undefined = useMemo<number | undefined>(() => {
     if (typeof limit !== 'undefined' && typeof total !== 'undefined') {
@@ -38,8 +39,21 @@ const ClothList: FC<props> = ({ clothes, pagination: { total, limit, page, onSel
                 {
                   clothes.map(cloth => (
                     <Panel key={cloth.id} style={{ marginBottom: 10, marginTop: 10 }} bordered>
-                      <h4><Link to={`${path}/${cloth.id}`}>{cloth.name}</Link></h4>
-                      <p><small>Rp. {cloth.price}</small></p>
+                      <FlexboxGrid align="middle" justify='space-between'>
+                        <FlexboxGrid.Item colspan={16}>
+                          <h4><Link to={`${path}/${cloth.id}`}>{cloth.name}</Link></h4>
+                          <p><small>Rp. {cloth.price}</small></p>
+                        </FlexboxGrid.Item>
+                        <FlexboxGrid.Item colspan={2}>
+                          <Whisper placement="top" speaker={<Tooltip>Edit {cloth.name}</Tooltip>}>
+                            <IconButton onClick={() => onEdit(cloth)} size="sm" color="orange" icon={<Icon icon="edit2" />} />
+                          </Whisper>
+                          <Divider vertical />
+                          <Whisper placement="topEnd" speaker={<Tooltip>Hapus {cloth.name}</Tooltip>}>
+                            <IconButton size="sm" color="red" icon={<Icon icon="trash" />} />
+                          </Whisper>
+                        </FlexboxGrid.Item>
+                      </FlexboxGrid>
                     </Panel>
                   ))
                 }

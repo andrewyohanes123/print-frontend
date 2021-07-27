@@ -69,6 +69,15 @@ const Layout: FC = (): ReactElement => {
     })
   }, [errorCatch, getSides, id, ClothSide]);
 
+  const deleteSide = useCallback((side: ClothSideAttributes) => {
+    side.delete().then(resp => {
+      Alert.success(`Sisi ${resp.name} berhasil dihapus`);
+      getSides();
+    }).catch(e => {
+      errorCatch(e);
+    })
+  }, [getSides, errorCatch]);
+
   useEffect(() => {
     getSides();
   }, [getSides])
@@ -84,7 +93,7 @@ const Layout: FC = (): ReactElement => {
         :
         <Container height="calc(100% - 105px)">
           <AddClothSide onSubmit={createClothSide} />
-          <SideLists sides={sides.rows} loading={loading} />
+          <SideLists onDelete={deleteSide} sides={sides.rows} loading={loading} />
         </Container>
       }
     </>

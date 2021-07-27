@@ -1,5 +1,6 @@
-import { FC, ReactElement, useState, useCallback } from "react"
+import { FC, ReactElement, useState, useCallback, useEffect } from "react"
 import { Button, Modal, Form, ControlLabel, FormControl, FormGroup, Schema, InputNumber, InputGroup } from "rsuite"
+import { ClothAttributes } from "types";
 
 type formModal = {
   name: string;
@@ -8,6 +9,8 @@ type formModal = {
 
 interface props {
   onSubmit: (val: formModal, cb: () => void) => void;
+  cloth?: ClothAttributes;
+  onExited?: () => void;
 }
 
 const { Types: { StringType } } = Schema;
@@ -16,9 +19,9 @@ const model = Schema.Model({
   name: StringType().isRequired('Masukkan jenis kaos')
 });
 
-const AddClothModal: FC<props> = ({ onSubmit }): ReactElement => {
+const AddClothModal: FC<props> = ({ onSubmit, cloth, onExited }): ReactElement => {
   const [modal, toggleModal] = useState<boolean>(false);
-  const [values, setValues] = useState<{ 'name': '', price: number }>({ name: '', price: 50000 });
+  const [values, setValues] = useState<{ name: string, price: number }>({ name: '', price: 50000 });
   const [loading, toggleLoading] = useState<boolean>(false);
 
   const cleanUp = useCallback(() => {
@@ -34,11 +37,24 @@ const AddClothModal: FC<props> = ({ onSubmit }): ReactElement => {
     }
   }, [values, onSubmit, cleanUp]);
 
+  useEffect(() => {
+    if (typeof cloth !== 'undefined') {
+      toggleModal(true);
+      setValues({ name: cloth.name, price: cloth.price })
+    } else {
+      setValues({name: '', price: 50000});
+    }
+  }, [cloth]);
+
   return (
     <>
       <Button onClick={() => toggleModal(true)}>Tambah Kaos</Button>
-      <Modal show={modal} onHide={() => toggleModal(false)}>
-        <Modal.Header>Tambah Data Kaos</Modal.Header>
+      <Modal onExited={onExited} show={modal} onHide={() => toggleModal(false)}>
+        {typeof cloth !== 'undefined' ?
+          <Modal.Header>Edit Data {cloth.name}</Modal.Header>
+          :
+          <Modal.Header>Tambah Data Kaos</Modal.Header>
+        }
         <Modal.Body>
           {/* @ts-ignore */}
           <Form onSubmit={onFinish} formValue={values} onChange={e => setValues({ ...e })} model={model} fluid>
@@ -50,11 +66,15 @@ const AddClothModal: FC<props> = ({ onSubmit }): ReactElement => {
               <ControlLabel>Harga</ControlLabel>
               <InputGroup style={{ width: '100%' }}>
                 <InputGroup.Addon>Rp.</InputGroup.Addon>
-                <InputNumber style={{ width: '100%' }} min={1000} disabled={loading} name="price" placeholder="Harga" />
+                <FormControl type="number" disabled={loading} name="price" placeholder="Harga" />
               </InputGroup>
             </FormGroup>
             <FormGroup>
-              <Button loading={loading}color="green" type="submit">Tambah</Button>
+              {cloth ?
+                <Button loading={loading} color="green" type="submit">Simpan</Button>
+                :
+                <Button loading={loading} color="green" type="submit">Tambah</Button>
+              }
             </FormGroup>
           </Form>
         </Modal.Body>

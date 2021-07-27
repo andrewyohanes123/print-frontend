@@ -9,7 +9,7 @@ interface props {
 
 const ClothPanel: FC<props> = ({ cloth }): ReactElement => {
   const [hovered, toggleHovered] = useState<boolean>(false);
-  const { setClothId } = useContext(EditorContext);
+  const { setClothId, setStep } = useContext(EditorContext);
 
   return (
     <Panel
@@ -18,7 +18,10 @@ const ClothPanel: FC<props> = ({ cloth }): ReactElement => {
       onMouseEnter={() => toggleHovered(true)}
       style={{ marginTop: 4, marginBottom: 4 }}
       bordered
-      onClick={() => setClothId(cloth.id)}
+      onClick={() => {
+        setClothId(cloth.id);
+        setStep(1)
+      }}
     >
       <h5>{cloth.name}</h5>
       <p className="secondary-text"><small>Rp. {cloth.price}</small></p>

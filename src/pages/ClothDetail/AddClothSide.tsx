@@ -42,10 +42,10 @@ const AddClothSide: FC<props> = ({ onSubmit }): ReactElement => {
 
   const onFinish = useCallback((valid: boolean) => {
     console.log(valid)
-    toggleLoading(true);
     const clothBaseValid = clothBase.length > 0;
     const clothBackgroundValid = clothBackground.length > 0;
     if (valid && clothBackgroundValid && clothBaseValid) {
+      toggleLoading(true);
       onSubmit({ ...formValues, cloth_base: clothBase[0], cloth_background: clothBackground[0] }, resetForm);
     }
   }, [clothBackground, clothBase, onSubmit, resetForm, formValues]);
@@ -88,7 +88,7 @@ const AddClothSide: FC<props> = ({ onSubmit }): ReactElement => {
               <Button disabled={loading} type="submit" loading={loading} ripple={false} appearance="primary" block>Tambah</Button>
             </FormGroup>
           </Form>
-          {loading && <Message type="info" title="Mengunggah" description="Sedang mengunggah gambar pakaian. Harap tunggu..." />}
+          {loading && <Message style={{ marginTop: 8 }} type="info" title="Mengunggah" description="Sedang mengunggah gambar pakaian. Harap tunggu..." />}
         </Modal.Body>
       </Modal>
     </>

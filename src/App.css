@@ -13,3 +13,11 @@ html, body, div#root {
 .cloth-display {
   border-bottom: 1px solid #e5e5ea;
 }
+
+.cloth-side-active {
+  background-color: #0984e3 !important;
+}
+
+.cloth-side-active p small {
+  color: white;
+}
