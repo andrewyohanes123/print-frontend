@@ -58,6 +58,11 @@ const Canvas: FC = (): ReactElement => {
   }, [getFirstClothSide])
 
   useEffect(() => {
+    togglePreview(false);
+    // eslint-disable-next-line
+  }, [cloth_side_id])
+
+  useEffect(() => {
     getColors();
   }, [getColors]);
 

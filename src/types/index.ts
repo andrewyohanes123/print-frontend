@@ -3,55 +3,55 @@ import { ICollectionResult } from "@edgarjeremy/sirius.adapter/dist/libs/Utility
 
 
 export interface AboutAttributes extends ModelInstance {
-	content: string;
-	created_at?: Date;
-	updated_at?: Date;
+  content: string;
+  created_at?: Date;
+  updated_at?: Date;
 }
 
 export interface ClothAttributes extends ModelInstance {
-	name: string;
+  name: string;
   price: number;
-	created_at?: Date;
-	updated_at?: Date;
+  created_at?: Date;
+  updated_at?: Date;
 }
 
 export interface RawClothAttributes {
   id: number;
-	name: string;
+  name: string;
   price: number;
 }
 
 export interface ClothSideAttributes extends ModelInstance {
-	name: string;
+  name: string;
   cloth_base: string;
   cloth_background: string;
-	created_at?: Date;
-	updated_at?: Date;
+  created_at?: Date;
+  updated_at?: Date;
 }
 
 export interface RawClothSideAttributes {
   id: number;
-	name: string;
+  name: string;
   cloth_base: string;
   cloth_background: string;
 }
 
 export interface ColorAttributes {
-	id?: number;
+  id?: number;
   name: string;
-	color: string;
-	created_at?: Date;
-	updated_at?: Date;
+  color: string;
+  created_at?: Date;
+  updated_at?: Date;
 }
 
 export interface OrderAttributes extends ModelInstance {
-	name: string;
+  name: string;
   email: string;
   phone: string;
   confirmed?: boolean;
   order_number: string;
-	created_at?: Date;
-	updated_at?: Date;
+  created_at?: Date;
+  updated_at?: Date;
 }
 
 export interface OrderClothSideAttributes extends ModelInstance {
@@ -75,6 +75,7 @@ export interface RawOrderClothSideAttributes {
   design_y: number;
   mockup_file?: string;
   cloth_side_id?: number;
+  cloth_side_name?: string;
   created_at?: Date;
   updated_at?: Date;
 }
@@ -88,18 +89,24 @@ export interface OrderCountAttributes extends ModelInstance {
   updated_at?: Date;
 }
 
+export interface RawOrderCountAttributes {
+  amount: number;
+  cloth_id: number;
+  size: string;
+}
+
 export interface PortfolioAttributes extends ModelInstance {
-	picture: string;
-	created_at?: Date;
-	updated_at?: Date;
+  picture: string;
+  created_at?: Date;
+  updated_at?: Date;
 }
 
 export interface UserAttributes extends ModelInstance {
-	name: string;
-	username: string;
-	password: string;
-	created_at?: Date;
-	updated_at?: Date;
+  name: string;
+  username: string;
+  password: string;
+  created_at?: Date;
+  updated_at?: Date;
 }
 
 export interface ModelCollectionResult<T extends ModelInstance> extends ICollectionResult {

@@ -34,7 +34,7 @@ const Editor: FC = (): ReactElement => {
 
   const setClothSide = useCallback((side: RawOrderClothSideAttributes) => {
     console.log(side)
-    const newClothSides = [side, ...cloth_sides.filter(sd => sd.cloth_side_id !== side.cloth_side_id)];
+    const newClothSides = [...cloth_sides.filter(sd => sd.cloth_side_id !== side.cloth_side_id), side];
     setClothSides(newClothSides);
   }, [cloth_sides]);
 

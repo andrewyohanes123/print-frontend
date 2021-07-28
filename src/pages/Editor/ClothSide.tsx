@@ -1,5 +1,5 @@
 import { FC, ReactElement, useCallback, useContext, useEffect, useState } from "react"
-import { List, Panel, Row, Grid, Col } from "rsuite"
+import { List, Panel, Row, Grid, Col, Button } from "rsuite"
 import Loading from "components/Loading";
 import useErrorCatcher from "hooks/useErrorCatcher";
 import useModels from "hooks/useModels"
@@ -12,7 +12,7 @@ const ClothSide: FC = (): ReactElement => {
   const [sides, setSides] = useState<RawClothSideAttributes[]>([]);
   const [loading, toggleLoading] = useState<boolean>(true);
   const { errorCatch } = useErrorCatcher();
-  const { cloth_id, setClothSideId } = useContext(EditorContext);
+  const { cloth_id, setClothSideId, cloth_sides, setStep } = useContext(EditorContext);
   const [clothName, setClothName] = useState<string>('');
 
   const getSides = useCallback(() => {
@@ -60,7 +60,7 @@ const ClothSide: FC = (): ReactElement => {
           <Grid style={{ padding: 8 }}>
             <Row gutter={16}>
               {sides.map((side, idx) => (
-                <Col md={6} key={side.id}>
+                <Col md={6} sm={12} key={side.id}>
                   <ClothSidePanel onClick={() => setClothSideId(side.id)} idx={idx} side={side} />
                 </Col>
               ))}
@@ -68,6 +68,10 @@ const ClothSide: FC = (): ReactElement => {
           </Grid>
         </List>
       }
+      {cloth_sides.length > 0 &&
+        <Panel>
+          <Button onClick={() => setStep(2)} appearance="primary" block>Checkout</Button>
+        </Panel>}
     </Panel>
   )
 }

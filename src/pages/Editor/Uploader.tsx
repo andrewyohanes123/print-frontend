@@ -52,13 +52,17 @@ const Uploader: FC = (): ReactElement => {
         <Divider />
         {
           cloth_sides.map(side => (
-            <OrderClothSidePanel src={URL.createObjectURL(side.design_file)} alt={`${side.cloth_side_id!}`} />
+            <OrderClothSidePanel key={side.cloth_side_id} cloth_side_id={side.cloth_side_id!} src={URL.createObjectURL(side.design_file)} alt={`${side.cloth_side_id!}`} />
           ))
         }
       </>
       :
       <p className="secondary-text">Pilih file design</p>
       }
+      {cloth_sides.length > 0 && <>
+      <Divider />
+      <h5>Total Harga: Rp. {`${cloth_sides.length * 25000}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</h5>
+      </>}
     </Panel>
   )
 }
