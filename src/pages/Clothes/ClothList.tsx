@@ -1,5 +1,5 @@
 import { FC, ReactElement, useMemo } from "react"
-import { List, Loader, Pagination, Panel, FlexboxGrid, Button, Icon, IconButton, Divider, Whisper, Tooltip } from "rsuite"
+import { List, Loader, Pagination, Panel, FlexboxGrid, Icon, IconButton, Divider, Whisper, Tooltip } from "rsuite"
 import { Link, useRouteMatch } from 'react-router-dom'
 import { ClothAttributes } from "types"
 import FullscreenDiv, { Header, SubHeader } from "components/FullscreenDiv";
@@ -30,7 +30,7 @@ const ClothList: FC<props> = ({ clothes, pagination: { total, limit, page, onSel
           <FullscreenDiv flex={true} flexDirection="column" background="white" justifyContent="center" alignItems="center">
             <Loader size="lg" />
             <Header style={{ color: 'black', fontSize: 30 }} as="h4">Loading</Header>
-            <SubHeader style={{ color: '#5f5f5f' }}>Loading data kaos</SubHeader>
+            <SubHeader style={{ color: '#5f5f5f' }}>Loading data pakaian</SubHeader>
           </FullscreenDiv>
           :
           clothes.length > 0 ?
@@ -62,8 +62,8 @@ const ClothList: FC<props> = ({ clothes, pagination: { total, limit, page, onSel
             </>
             :
             <FullscreenDiv flex={true} flexDirection="column" background="white" justifyContent="center" alignItems="center">
-              <Header style={{ color: 'black', fontSize: 30 }} as="h4">Belum ada data kaos</Header>
-              <SubHeader style={{ color: '#5f5f5f' }}>Silakan tambah data kaos</SubHeader>
+              <Header style={{ color: 'black', fontSize: 30 }} as="h4">Belum ada data pakaian</Header>
+              <SubHeader style={{ color: '#5f5f5f' }}>Silakan tambah data pakaian</SubHeader>
             </FullscreenDiv>
       }
     </>

@@ -36,10 +36,10 @@ export interface RawClothSideAttributes {
   cloth_background: string;
 }
 
-export interface ColorAttributes {
-  id?: number;
+export interface ColorAttributes extends ModelInstance {
   name: string;
   color: string;
+  cloth_id?: number;
   created_at?: Date;
   updated_at?: Date;
 }
@@ -84,7 +84,7 @@ export interface OrderCountAttributes extends ModelInstance {
   amount: number;
   order_id?: number;
   cloth_id?: number;
-  size: 'S' | 'M' | 'L' | 'XL' | 'XXL';
+  size_id?: number;
   created_at?: Date;
   updated_at?: Date;
 }
@@ -107,6 +107,22 @@ export interface UserAttributes extends ModelInstance {
   password: string;
   created_at?: Date;
   updated_at?: Date;
+}
+
+export interface SizeAttributes extends ModelInstance {
+	size: "S" | "M" | "L" | "XL" | "XXL";
+	cloth_id?: number;
+	created_at?: Date;
+	updated_at?: Date;
+}
+
+export interface ColorSizeStockAttributes extends ModelInstance {
+	stock: number;
+	cloth_id?: number;
+  size_id?: number;
+  color_id?: number;
+	created_at?: Date;
+	updated_at?: Date;
 }
 
 export interface ModelCollectionResult<T extends ModelInstance> extends ICollectionResult {

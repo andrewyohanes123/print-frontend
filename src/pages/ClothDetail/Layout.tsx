@@ -7,9 +7,11 @@ import useErrorCatcher from "hooks/useErrorCatcher";
 import FullscreenDiv, { Header, SubHeader } from "components/FullscreenDiv";
 import Container from "components/Container";
 import AddClothSide from "./AddClothSide";
-import { Alert } from "rsuite";
+import { Alert, Panel } from "rsuite";
 import SideLists from "./SideLists";
 import { FileType } from "rsuite/lib/Uploader";
+import Colors from "./Colors";
+import Sizes from "./Sizes";
 
 const Layout: FC = (): ReactElement => {
   const { models: { Cloth, ClothSide } } = useModels();
@@ -32,7 +34,7 @@ const Layout: FC = (): ReactElement => {
   useEffect(() => {
     getCloth();
   }, [id, getCloth]);
-  
+
   const getSides = useCallback(() => {
     ClothSide.collection({
       attributes: ['name', 'id', 'cloth_background', 'cloth_base'],
@@ -51,7 +53,7 @@ const Layout: FC = (): ReactElement => {
     })
   }, [ClothSide, errorCatch, id]);
 
-  const createClothSide = useCallback((val: {name: string; cloth_base: FileType; cloth_background: FileType;}, cb: () => void) => {
+  const createClothSide = useCallback((val: { name: string; cloth_base: FileType; cloth_background: FileType; }, cb: () => void) => {
     const formData = new FormData();
     formData.append('name', val.name);
     // @ts-ignore
@@ -92,8 +94,18 @@ const Layout: FC = (): ReactElement => {
         </FullscreenDiv>
         :
         <Container height="calc(100% - 105px)">
-          <AddClothSide onSubmit={createClothSide} />
-          <SideLists onDelete={deleteSide} sides={sides.rows} loading={loading} />
+          <Panel style={{ marginBottom: 8 }} bordered bodyFill header={<h5>Sisi {cloth?.name}</h5>}>
+            <Container>
+              <AddClothSide onSubmit={createClothSide} />
+            </Container>
+            <SideLists onDelete={deleteSide} sides={sides.rows} loading={loading} />
+          </Panel>
+          <Panel style={{ marginBottom: 8 }} bordered bodyFill header={<h5>Warna {cloth?.name}</h5>}>
+            <Colors />
+          </Panel>
+          <Panel style={{ marginBottom: 8 }} bordered bodyFill header={<h5>Size {cloth?.name}</h5>}>
+            <Sizes />
+          </Panel>
         </Container>
       }
     </>

@@ -20,7 +20,7 @@ const Layout: FC = (): ReactElement => {
           </Navbar.Body>
         </Navbar>
       </SideBar>
-      <Container style={{ height: '100%' }}>
+      <Container style={{ height: '100%', overflow: 'auto' }}>
         <Content>
           <Routes />
         </Content>

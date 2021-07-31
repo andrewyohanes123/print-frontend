@@ -1,5 +1,5 @@
 import { FC, ReactElement, useState, useCallback, useEffect } from "react"
-import { Button, Modal, Form, ControlLabel, FormControl, FormGroup, Schema, InputNumber, InputGroup } from "rsuite"
+import { Button, Modal, Form, ControlLabel, FormControl, FormGroup, Schema, InputGroup } from "rsuite"
 import { ClothAttributes } from "types";
 
 type formModal = {

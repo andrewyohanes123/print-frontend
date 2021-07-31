@@ -5,7 +5,7 @@ import Layout from "./Layout"
 const Clothes: FC = (): ReactElement => {
   return (
     <Container height={'calc(100% - calc(12px + 24px + 36px))'}>
-      <h3>Kaos</h3>
+      <h3>Pakaian</h3>
       <Layout />
     </Container>
   )
