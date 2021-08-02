@@ -1,4 +1,4 @@
-import { FC, ReactElement, useRef, useLayoutEffect, useCallback, useState, useContext } from "react"
+import { FC, ReactElement, useRef, useLayoutEffect, useCallback, useState, useContext, useEffect } from "react"
 import { Image, Transformer } from 'react-konva'
 import { Image as ImageRef } from 'konva/lib/shapes/Image'
 import { Transformer as TrRef } from 'konva/lib/shapes/Transformer'
@@ -14,9 +14,10 @@ interface props {
   initialHeight: number;
   initialX: number;
   initialY: number;
+  onLoad?: () => void;
 }
 
-const DesignImage: FC<props> = ({ src, preview, initialHeight, initialWidth, initialX, initialY, originalFile }): ReactElement => {
+const DesignImage: FC<props> = ({ src, preview, initialHeight, initialWidth, initialX, initialY, originalFile, onLoad }): ReactElement => {
   const imgRef = useRef<ImageRef>(null);
   const trRef = useRef<TrRef>(null);
   const [image] = useImage(src);
@@ -72,6 +73,14 @@ const DesignImage: FC<props> = ({ src, preview, initialHeight, initialWidth, ini
       trRef.current.getLayer()?.batchDraw();
     }
   }, [trRef, imgRef, preview]);
+
+  useEffect(() => {
+    if (typeof image !== 'undefined') {
+      image.onload = () => {
+        onLoad && onLoad();
+      }
+    }
+  }, [image, onLoad])
 
   return (
     preview ?

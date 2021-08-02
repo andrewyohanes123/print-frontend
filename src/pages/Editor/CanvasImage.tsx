@@ -1,6 +1,6 @@
-import { FC, ReactElement } from "react"
+import { FC, ReactElement, useLayoutEffect } from "react"
 import useImage from 'use-image'
-import {Image} from 'react-konva'
+import { Image as Img } from 'react-konva'
 
 
 interface props {
@@ -8,13 +8,25 @@ interface props {
   canvasSize: number;
   opacity?: number;
   globalCompositeOperation?: any;
-} 
+  onLoad?: () => void;
+}
 
-const CanvasImage: FC<props> = ({src, canvasSize, opacity, globalCompositeOperation}): ReactElement => {
+const CanvasImage: FC<props> = ({ src, canvasSize, opacity, globalCompositeOperation, onLoad }): ReactElement => {
   const [image] = useImage(src);
 
+  useLayoutEffect(() => {
+    if (typeof image !== 'undefined') {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => {
+        onLoad && onLoad();
+        console.log('loaded')
+      }
+    }
+  }, [image, onLoad, src]);
+
   return (
-    <Image image={image} width={canvasSize} globalCompositeOperation={globalCompositeOperation} opacity={opacity} height={canvasSize} />
+    <Img image={image} width={canvasSize} globalCompositeOperation={globalCompositeOperation} opacity={opacity} height={canvasSize} />
   )
 }
 

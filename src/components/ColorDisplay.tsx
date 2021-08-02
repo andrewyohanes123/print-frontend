@@ -2,11 +2,12 @@ import styled from "@emotion/styled";
 
 interface props {
   backgroundColor: string;
+  size?: number;
 }
 
-export const ColorDisplay = styled.div<props>(({ backgroundColor }) => ({
+export const ColorDisplay = styled.div<props>(({ backgroundColor, size }) => ({
   backgroundColor,
   borderRadius: '50%',
-  height: 50,
-  width: 50
+  height: size ?? 50,
+  width: size ?? 50
 }));

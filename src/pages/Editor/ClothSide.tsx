@@ -12,7 +12,7 @@ const ClothSide: FC = (): ReactElement => {
   const [sides, setSides] = useState<RawClothSideAttributes[]>([]);
   const [loading, toggleLoading] = useState<boolean>(true);
   const { errorCatch } = useErrorCatcher();
-  const { cloth_id, setClothSideId, cloth_sides, setStep } = useContext(EditorContext);
+  const { cloth_id, setClothSideId, cloth_sides, setStep, color_id } = useContext(EditorContext);
   const [clothName, setClothName] = useState<string>('');
 
   const getSides = useCallback(() => {
@@ -68,11 +68,16 @@ const ClothSide: FC = (): ReactElement => {
           </Grid>
         </List>
       }
-      {cloth_sides.length > 0 &&
+      {(cloth_sides.length > 0 && typeof color_id !== 'undefined') &&
         <Panel>
           <Button onClick={() => setStep(2)} appearance="primary" block>Checkout</Button>
         </Panel>}
-    </Panel>
+      {typeof color_id === 'undefined' &&
+        < Panel >
+          <p className="secondary-text text-center">Silakan pilih warna {clothName} terlebih dahulu</p>
+        </Panel>
+      }
+    </Panel >
   )
 }
 

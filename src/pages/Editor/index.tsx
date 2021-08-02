@@ -13,6 +13,8 @@ type editorContextType = {
   setStep: (step: number) => void;
   color: string;
   setColor: (color: string) => void;
+  color_id?: number;
+  setColorId: (color: number) => void;
 }
 
 export const EditorContext = createContext<editorContextType>({
@@ -22,13 +24,15 @@ export const EditorContext = createContext<editorContextType>({
   step: 0,
   setStep: () => console.log('object'),
   color: 'white',
-  setColor: (color) => console.log(color)
+  setColor: (color) => console.log(color),
+  setColorId: (color) => console.log(color)
 });
 
 const Editor: FC = (): ReactElement => {
   const [cloth_id, setClothId] = useState<number | undefined>(undefined);
   const [cloth_sides, setClothSides] = useState<RawOrderClothSideAttributes[]>([]);
   const [cloth_side_id, setClothSideId] = useState<number | undefined>(undefined);
+  const [color_id, setColorId] = useState<number | undefined>(undefined);
   const [step, setStep] = useState<number>(0);
   const [color, setColor] = useState<string>('white');
 
@@ -39,7 +43,7 @@ const Editor: FC = (): ReactElement => {
   }, [cloth_sides]);
 
   return (
-    <EditorContext.Provider value={{ cloth_id, setClothId, setClothSide, cloth_sides, setClothSideId, cloth_side_id, setStep, step, color, setColor }}>
+    <EditorContext.Provider value={{ cloth_id, setClothId, setClothSide, cloth_sides, setClothSideId, cloth_side_id, setStep, step, color, setColor, setColorId, color_id }}>
       <Layout />
     </EditorContext.Provider>
   )

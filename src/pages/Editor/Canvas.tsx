@@ -1,15 +1,18 @@
 import { FC, ReactElement, useRef, useEffect, useState, useCallback, useLayoutEffect, useContext } from "react"
-import { Stage, Layer, Rect } from 'react-konva'
-import { Button, Divider, FlexboxGrid } from 'rsuite'
+import { Stage, Layer, Rect, Text } from 'react-konva'
+import { Button, Divider, FlexboxGrid, Grid, Row, Col } from 'rsuite'
 import { Transformer } from "konva/lib/shapes/Transformer";
 import { Image } from "konva/lib/shapes/Image";
-import { CirclePicker } from 'react-color'
 import useModels from "hooks/useModels";
 import useErrorCatcher from "hooks/useErrorCatcher";
 import { EditorContext } from ".";
 import { baseUrl } from "App";
 import CanvasImage from "./CanvasImage";
 import DesignImage from "./DesignImage";
+import { ColorAttributes } from "types";
+import { ColorDisplay } from "components/ColorDisplay";
+import { ColorDisplayPanel } from "components/ColorDisplayPanel";
+import CanvasSideSelector from "./CanvasSideSelector";
 
 const Canvas: FC = (): ReactElement => {
   const trRef = useRef<Transformer>(null);
@@ -19,23 +22,28 @@ const Canvas: FC = (): ReactElement => {
   const flexBoxRef = useRef<HTMLDivElement>(null);
   const [canvasSize, setCanvasSize] = useState<number>(500);
   const [preview, togglePreview] = useState<boolean>(false);
-  const [colors, setColors] = useState<string[]>(['white']);
+  const [colors, setColors] = useState<ColorAttributes[]>([]);
+  const [loading, toggleLoading] = useState<boolean>(false);
   const { models: { Color, ClothSide } } = useModels();
   const { errorCatch } = useErrorCatcher();
-  const { cloth_id, cloth_sides, cloth_side_id, setClothSide, setClothId, setClothSideId, step, setStep, color, setColor } = useContext(EditorContext);
+  const { cloth_id, cloth_sides, cloth_side_id, setClothSide, setClothId, setClothSideId, step, setStep, color, setColor, setColorId, color_id } = useContext(EditorContext);
 
   const getColors = useCallback(() => {
     Color.collection({
-      attributes: ['color'],
+      attributes: ['color', 'name', 'cloth_id'],
+      where: {
+        cloth_id
+      }
     }).then(resp => {
-      setColors(resp.rows.map(color => (color.color)));
+      setColors(resp.rows as ColorAttributes[]);
     }).catch(e => {
       errorCatch(e);
     })
-  }, [errorCatch, Color]);
+  }, [errorCatch, Color, cloth_id]);
 
   const getFirstClothSide = useCallback(() => {
     if (typeof cloth_id !== 'undefined') {
+      toggleLoading(true);
       ClothSide.collection({
         limit: 1,
         attributes: ['cloth_base', 'cloth_background', 'cloth_id'],
@@ -59,8 +67,9 @@ const Canvas: FC = (): ReactElement => {
 
   useEffect(() => {
     togglePreview(false);
+    getFirstClothSide();
     // eslint-disable-next-line
-  }, [cloth_side_id])
+  }, [cloth_side_id]);
 
   useEffect(() => {
     getColors();
@@ -80,6 +89,12 @@ const Canvas: FC = (): ReactElement => {
     }
   }, [trRef, imgRef, preview]);
 
+  useEffect(() => {
+    if (step === 2) {
+      togglePreview(true);
+    }
+  }, [step])
+
   // const canvasScale: number = useMemo(() => {
   //   return Math.min(
   //     canvasSize / 700,
@@ -91,16 +106,16 @@ const Canvas: FC = (): ReactElement => {
     <FlexboxGrid.Item colspan={11}>
       <div ref={flexBoxRef}>
         <Stage width={canvasSize} height={canvasSize}>
-          <EditorContext.Provider value={{ cloth_id, cloth_sides, cloth_side_id, setClothSide, setClothId, setClothSideId, step, setStep, color, setColor }}>
+          <EditorContext.Provider value={{ cloth_id, cloth_sides, cloth_side_id, setClothSide, setClothId, setClothSideId, step, setStep, color, setColor, setColorId, color_id }}>
             <Layer>
-              <Rect width={640} height={800} fill={color} />
+              <Rect width={640} height={800} fill={loading ? 'white' : color} />
               {preview &&
                 <>
                   {cloth_sides.filter(side => side.cloth_side_id === cloth_side_id).map(side => (
                     <DesignImage
                       initialX={side.design_x}
                       initialY={side.design_y}
-                      key={side.cloth_side_id}
+                      key={`${side.cloth_side_id}${clothBase}`}
                       src={typeof side.design_file !== 'string' ? URL.createObjectURL(side.design_file) : side.design_file}
                       initialHeight={side.design_height}
                       initialWidth={side.design_width}
@@ -109,9 +124,10 @@ const Canvas: FC = (): ReactElement => {
                     />
                   ))}
                 </>}
-              <CanvasImage src={clothBase} key={clothBase} globalCompositeOperation="overlay" opacity={0.7} canvasSize={canvasSize} />
-              <CanvasImage src={clothBase} globalCompositeOperation="multiply" opacity={0.9} canvasSize={canvasSize} />
+              <CanvasImage src={clothBase} key={clothBase} globalCompositeOperation="overlay" opacity={0.8} canvasSize={canvasSize} />
+              <CanvasImage src={clothBase} globalCompositeOperation="multiply" opacity={0.9} onLoad={() => toggleLoading(false)} canvasSize={canvasSize} />
               <CanvasImage src={clothBackground} key={clothBackground} canvasSize={canvasSize} />
+              {loading && <Text text="Loading gambar pakaian" x={canvasSize / 2} y={canvasSize / 2} />}
               {/* <Img width={canvasSize} height={canvasSize} globalCompositeOperation="overlay" opacity={0.3} image={cloth} /> */}
               {/* <Img width={canvasSize} height={canvasSize} globalCompositeOperation="multiply" opacity={0.75} image={cloth} /> */}
               {/* <Img width={canvasSize} height={canvasSize} image={background} /> */}
@@ -121,7 +137,7 @@ const Canvas: FC = (): ReactElement => {
                 <DesignImage
                   initialX={side.design_x}
                   initialY={side.design_y}
-                  key={side.cloth_side_id}
+                  key={`${side.cloth_side_id}${clothBackground}`}
                   src={URL.createObjectURL(side.design_file)}
                   initialHeight={side.design_height}
                   initialWidth={side.design_width}
@@ -133,8 +149,31 @@ const Canvas: FC = (): ReactElement => {
           </EditorContext.Provider>
         </Stage>
         <Divider />
+        { step < 2 &&
+          <>
         <Button style={{ marginBottom: 8 }} onClick={() => togglePreview(!preview)} appearance="primary" block>{preview ? "Edit Mockup" : `Preview Mockup`}</Button>
-        <CirclePicker circleSpacing={20} circleSize={35} width="100%" colors={colors} color={color} onChangeComplete={ev => setColor(ev.hex)} />
+        <Grid fluid>
+          <Row gutter={6}>
+            {
+              colors.map(clr => (
+                <Col sm={4} md={4} key={`${clr.id}-${clr.name}`}>
+                  <ColorDisplayPanel onClick={() => {
+                    setColor(clr.color);
+                    setColorId(clr.id)
+                  }} className={color === clr.color ? 'color-display-active' : ''}>
+                    <ColorDisplay size={30} backgroundColor={clr.color} />
+                    <p style={{ textAlign: 'center' }}>{clr.name}</p>
+                  </ColorDisplayPanel>
+                </Col>
+              ))
+            }
+          </Row>
+        </Grid>
+        </>}
+        {
+          step === 2 &&
+          <CanvasSideSelector />
+        }
       </div>
     </FlexboxGrid.Item>
   )
