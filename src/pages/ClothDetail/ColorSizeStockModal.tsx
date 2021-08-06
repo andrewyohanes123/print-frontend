@@ -34,7 +34,10 @@ const ColorSizeStockModal: FC<props> = ({ show, onHide, color }): ReactElement =
         },
         // @ts-ignore
         required: false
-      }]
+      }],
+      where: {
+        cloth_id
+      }
     }).then(resp => {      
       console.log(resp);
       setSizes(resp.rows.filter(row => row.color_size_stocks.length === 0) as SizeAttributes[]);
@@ -42,7 +45,7 @@ const ColorSizeStockModal: FC<props> = ({ show, onHide, color }): ReactElement =
       errorCatch(e);
       setRetry(attempt => attempt + 1);
     })
-  }, [errorCatch, Size, color]);
+  }, [errorCatch, Size, color, cloth_id]);
 
   useEffect(() => {
     if (retry < 4 && show) {
@@ -50,8 +53,8 @@ const ColorSizeStockModal: FC<props> = ({ show, onHide, color }): ReactElement =
     }
   }, [getSizes, retry, show]);
 
-  const getStocks = useCallback(() => {
-    toggleLoading(true);
+  const getStocks = useCallback((loading: boolean = false) => {
+    toggleLoading(loading);
     ColorSizeStock.collection({
       where: {
         cloth_id,
@@ -92,7 +95,7 @@ const ColorSizeStockModal: FC<props> = ({ show, onHide, color }): ReactElement =
   }, [selectedSizes, color, ColorSizeStock, cloth_id, getStocks]);
 
   useEffect(() => {
-    show && getStocks();
+    show && getStocks(true);
   }, [getStocks, show]);
 
   return (

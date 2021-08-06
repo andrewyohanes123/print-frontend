@@ -3,6 +3,8 @@ import { Stage, Layer, Rect, Text } from 'react-konva'
 import { Button, Divider, FlexboxGrid, Grid, Row, Col } from 'rsuite'
 import { Transformer } from "konva/lib/shapes/Transformer";
 import { Image } from "konva/lib/shapes/Image";
+import { Stage as StageInstance } from "konva/lib/Stage";
+import {saveAs} from 'file-saver'
 import useModels from "hooks/useModels";
 import useErrorCatcher from "hooks/useErrorCatcher";
 import { EditorContext } from ".";
@@ -17,6 +19,7 @@ import CanvasSideSelector from "./CanvasSideSelector";
 const Canvas: FC = (): ReactElement => {
   const trRef = useRef<Transformer>(null);
   const imgRef = useRef<Image>(null);
+  const stageRef = useRef<StageInstance>(null);
   const [clothBase, setClothBase] = useState<string>('');
   const [clothBackground, setClothBackground] = useState<string>('');
   const flexBoxRef = useRef<HTMLDivElement>(null);
@@ -26,7 +29,21 @@ const Canvas: FC = (): ReactElement => {
   const [loading, toggleLoading] = useState<boolean>(false);
   const { models: { Color, ClothSide } } = useModels();
   const { errorCatch } = useErrorCatcher();
-  const { cloth_id, cloth_sides, cloth_side_id, setClothSide, setClothId, setClothSideId, step, setStep, color, setColor, setColorId, color_id } = useContext(EditorContext);
+  const {
+    cloth_id,
+    cloth_sides,
+    cloth_side_id,
+    setClothSide,
+    setClothId,
+    setClothSideId,
+    step,
+    setStep,
+    color,
+    setColor,
+    setColorId,
+    color_id,
+    orderSuccess,
+    ...rest } = useContext(EditorContext);
 
   const getColors = useCallback(() => {
     Color.collection({
@@ -90,23 +107,24 @@ const Canvas: FC = (): ReactElement => {
   }, [trRef, imgRef, preview]);
 
   useEffect(() => {
-    if (step === 2) {
+    if (step > 2) {
       togglePreview(true);
     }
   }, [step])
 
-  // const canvasScale: number = useMemo(() => {
-  //   return Math.min(
-  //     canvasSize / 700,
-  //     canvasSize / 700
-  //   )
-  // },[canvasSize])
+  const savePicture = useCallback(() => {
+    if (stageRef.current !== null) {
+      const link = stageRef.current.toDataURL({ pixelRatio: 2, });
+      // console.log(link)
+      saveAs(link, `Mockup Design ${cloth_side_id}.png`);
+    }
+  }, [stageRef, cloth_side_id])
 
   return (
     <FlexboxGrid.Item colspan={11}>
       <div ref={flexBoxRef}>
-        <Stage width={canvasSize} height={canvasSize}>
-          <EditorContext.Provider value={{ cloth_id, cloth_sides, cloth_side_id, setClothSide, setClothId, setClothSideId, step, setStep, color, setColor, setColorId, color_id }}>
+        <Stage ref={stageRef} width={canvasSize} height={canvasSize}>
+          <EditorContext.Provider value={{ cloth_id, cloth_sides, cloth_side_id, setClothSide, setClothId, setClothSideId, step, setStep, color, setColor, setColorId, color_id, ...rest }}>
             <Layer>
               <Rect width={640} height={800} fill={loading ? 'white' : color} />
               {preview &&
@@ -120,7 +138,7 @@ const Canvas: FC = (): ReactElement => {
                       initialHeight={side.design_height}
                       initialWidth={side.design_width}
                       preview={preview}
-                      originalFile={side.design_file}
+                      originalFile={side.design_file as File}
                     />
                   ))}
                 </>}
@@ -142,36 +160,39 @@ const Canvas: FC = (): ReactElement => {
                   initialHeight={side.design_height}
                   initialWidth={side.design_width}
                   preview={preview}
-                  originalFile={side.design_file}
+                  originalFile={side.design_file as File}
                 />
               ))}
             </Layer>}
           </EditorContext.Provider>
         </Stage>
         <Divider />
-        { step < 2 &&
+        {step < 2 &&
           <>
-        <Button style={{ marginBottom: 8 }} onClick={() => togglePreview(!preview)} appearance="primary" block>{preview ? "Edit Mockup" : `Preview Mockup`}</Button>
-        <Grid fluid>
-          <Row gutter={6}>
-            {
-              colors.map(clr => (
-                <Col sm={4} md={4} key={`${clr.id}-${clr.name}`}>
-                  <ColorDisplayPanel onClick={() => {
-                    setColor(clr.color);
-                    setColorId(clr.id)
-                  }} className={color === clr.color ? 'color-display-active' : ''}>
-                    <ColorDisplay size={30} backgroundColor={clr.color} />
-                    <p style={{ textAlign: 'center' }}>{clr.name}</p>
-                  </ColorDisplayPanel>
-                </Col>
-              ))
-            }
-          </Row>
-        </Grid>
-        </>}
+            <Button style={{ marginBottom: 8 }} onClick={() => togglePreview(!preview)} appearance="primary" block>{preview ? "Edit Mockup" : `Preview Mockup`}</Button>
+            <Grid fluid>
+              <Row gutter={6}>
+                {
+                  colors.map(clr => (
+                    <Col sm={4} md={4} key={`${clr.id}-${clr.name}`}>
+                      <ColorDisplayPanel onClick={() => {
+                        setColor(clr.color);
+                        setColorId(clr.id)
+                      }} className={color === clr.color ? 'color-display-active' : ''}>
+                        <ColorDisplay size={30} backgroundColor={clr.color} />
+                        <p style={{ textAlign: 'center' }}>{clr.name}</p>
+                      </ColorDisplayPanel>
+                    </Col>
+                  ))
+                }
+              </Row>
+            </Grid>
+          </>}
+        {step === 3 &&
+          <Button color="blue" onClick={savePicture} style={{ marginBottom: 8 }} block>Simpan gambar</Button>
+        }
         {
-          step === 2 &&
+          step > 2 &&
           <CanvasSideSelector />
         }
       </div>

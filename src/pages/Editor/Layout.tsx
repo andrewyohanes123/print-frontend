@@ -8,6 +8,7 @@ import ClothLists from "./ClothLists"
 import ClothSide from "./ClothSide"
 import FormSection from "./FormSection"
 import Header from "./Header"
+import OrderSuccess from "./OrderSuccess"
 import Step from "./Step"
 import Uploader from "./Uploader"
 
@@ -19,7 +20,7 @@ const Layout: FC = (): ReactElement => {
     <>
       <Container>
         <FlexboxGrid justify="center">
-          <FlexboxGrid.Item style={{ marginRight: 10 }} colspan={10}>
+          <FlexboxGrid.Item sm={24} style={{ marginRight: 10 }} colspan={10}>
             <Header />
             <Step />
             {step === 0 ?
@@ -31,14 +32,17 @@ const Layout: FC = (): ReactElement => {
                   <Uploader />
                 </>
                 :
-                <FormSection />
+                step === 2 ?
+                  <FormSection />
+                  :
+                  <OrderSuccess />
             }
           </FlexboxGrid.Item>
           {
             typeof cloth_id !== 'undefined' ?
               <Canvas />
               :
-              <FlexboxGrid.Item style={{ height: '100%' }} colspan={11} >
+              <FlexboxGrid.Item sm={24} smHidden md={24} style={{ height: '100%' }} colspan={11} >
                 <Panel bordered>
                   <FullscreenDiv style={{ height: 350 }} flex={true} alignItems="center" justifyContent="center" background="white" flexDirection="column" draggable={false}>
                     <Icon icon="suitcase" size="5x" />

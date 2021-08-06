@@ -20,7 +20,7 @@ interface props {
 const DesignImage: FC<props> = ({ src, preview, initialHeight, initialWidth, initialX, initialY, originalFile, onLoad }): ReactElement => {
   const imgRef = useRef<ImageRef>(null);
   const trRef = useRef<TrRef>(null);
-  const [image] = useImage(src);
+  const [image] = useImage(src, 'anonymous');
   const [coords, setCoords] = useState<{ x: number, y: number }>({ x: initialX, y: initialY });
   const [scale, setScale] = useState<{ width: number; height: number }>({ width: initialWidth, height: initialHeight });
   const { setClothSide, cloth_side_id } = useContext(EditorContext)

@@ -12,7 +12,7 @@ interface props {
 }
 
 const CanvasImage: FC<props> = ({ src, canvasSize, opacity, globalCompositeOperation, onLoad }): ReactElement => {
-  const [image] = useImage(src);
+  const [image] = useImage(src, 'anonymous');
 
   useLayoutEffect(() => {
     if (typeof image !== 'undefined') {

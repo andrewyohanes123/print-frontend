@@ -1,8 +1,11 @@
 import { FC, ReactElement, useState, useEffect, useContext, useCallback, useMemo } from "react"
-import { Form, FormGroup, FormControl, ControlLabel, Panel, Divider, Button, Schema, Toggle } from 'rsuite'
+import { Form, FormGroup, FormControl, ControlLabel, Panel, Divider, Button, Schema, Toggle, Message } from 'rsuite'
 import useModels from "hooks/useModels"
 import { EditorContext } from ".";
 import ClothSize, { OrderAmount } from "./ClothSize";
+import { toBase64 } from 'modules/fileToBase64'
+import useErrorCatcher from "hooks/useErrorCatcher";
+import { OrderAttributes } from "types";
 // import { RawOrderCountAttributes, SizeAttributes } from "types";
 
 // const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
@@ -16,18 +19,22 @@ const model = Schema.Model({
 });
 
 const FormSection: FC = (): ReactElement => {
-  const { models: { Cloth, } } = useModels();
-  const { cloth_id, cloth_sides } = useContext(EditorContext);
+  const { models: { Cloth, Order } } = useModels();
+  const { cloth_id, cloth_sides, setStep, setOrderSuccess } = useContext(EditorContext);
   const [price, setPrice] = useState<number>(100);
+  const [clothName, setClothName] = useState<string>('');
   const [retry, setRetry] = useState<number>(0);
-  const [formValues, setFormValues] = useState<{[any: string]: any}>({});
+  const [formValues, setFormValues] = useState<{ [any: string]: any }>({});
   const [orderAmount, setOrderAmount] = useState<OrderAmount[]>([]);
+  const [loading, toggleLoading] = useState<boolean>(false);
+  const { errorCatch } = useErrorCatcher();
   // const [sizes, setSizes] = useState<SizeAttributes[]>([]);
 
   const getClothPrice = useCallback(() => {
     if (typeof cloth_id !== 'undefined') {
       Cloth.single(cloth_id).then(resp => {
         setPrice(resp.price);
+        setClothName(resp.name)
       }).catch(e => {
         console.log(e);
         setRetry(count => count + 1);
@@ -35,51 +42,77 @@ const FormSection: FC = (): ReactElement => {
     }
   }, [Cloth, cloth_id, setRetry]);
 
+  const createOrder = useCallback(async (valid: boolean) => {
+    try {
+      toggleLoading(true)
+      const files = await Promise.all(cloth_sides.map(side => toBase64(side)));
+      const order = await Order.create({
+        ...formValues,
+        order_counts: orderAmount,
+        cloth_sides: files
+      })
+      toggleLoading(false);
+      setOrderSuccess(order as OrderAttributes);
+      setStep(3);
+      console.log(order)
+    } catch (error) {
+      errorCatch(error);
+    }
+  }, [cloth_sides, formValues, orderAmount, Order, errorCatch, setStep, setOrderSuccess]);
+
   useEffect(() => {
     (retry < 4) && getClothPrice();
   }, [retry, getClothPrice]);
 
   const designPrice: number = useMemo<number>(() => (cloth_sides.length * 25000), [cloth_sides]);
 
-  const totalOrder: number = useMemo<number>(() => (orderAmount.length > 0 ? orderAmount.map(order => (order.amount)).reduce((a, b) => (a + b)) : 0), [orderAmount])
+  const totalOrder: number = useMemo<number>(() => (
+    orderAmount.length > 0 ? orderAmount.map(order => (order.amount)).reduce((a, b) => (a + b)) : 0
+  ), [orderAmount])
 
-  const totalPrice: number = useMemo<number>(() => ((price * totalOrder) + designPrice), [price, designPrice, totalOrder]);
+  const totalPrice: number = useMemo<number>(() => (
+    formValues.custom_cloth ?
+      (designPrice * totalOrder)
+      :
+      (price * totalOrder) + designPrice),
+    [price, designPrice, totalOrder, formValues]);
 
   return (
     <Panel header={<h4>Checkout</h4>} bordered>
-      <Form onChange={setFormValues} formValue={formValues} model={model} fluid>
+      <Form onChange={setFormValues} onSubmit={createOrder} formValue={formValues} model={model} fluid>
         <FormGroup>
           <ControlLabel>Nama</ControlLabel>
-          <FormControl placeholder="Nama Lengkap" name="name" />
+          <FormControl disabled={loading} placeholder="Nama Lengkap" name="name" />
         </FormGroup>
         <FormGroup>
           <ControlLabel>Alamat Email</ControlLabel>
-          <FormControl placeholder="Alamat Email" name="email" />
+          <FormControl disabled={loading} placeholder="Alamat Email" name="email" />
         </FormGroup>
         <FormGroup>
           <ControlLabel>Nomor Telepon</ControlLabel>
-          <FormControl maxLength={14} placeholder="Nomor Telepon" name="phone" />
+          <FormControl disabled={loading} maxLength={14} placeholder="Nomor Telepon" name="phone" />
         </FormGroup>
         <FormGroup>
           <ControlLabel>Deskripsi Tambahan</ControlLabel>
-          <FormControl componentClass="textarea" rows={5} placeholder="Deskripsi Tambahan" name="description" />
+          <FormControl disabled={loading} componentClass="textarea" rows={5} placeholder="Deskripsi Tambahan" name="description" />
         </FormGroup>
         <FormGroup>
           <ControlLabel>Bahan custom</ControlLabel>
-          <FormControl accepter={Toggle} name="custom_cloth" />
+          <FormControl disabled={loading} accepter={Toggle} name="custom_cloth" />
         </FormGroup>
         <FormGroup>
           <ControlLabel>Jumlah Pakaian</ControlLabel>
           <ClothSize onChangeOrderAmount={setOrderAmount} />
         </FormGroup>
+        {loading && <Message type="info" title="Loading" description="Sedang mengunggah file design. Mohon tunggu sebentar" />}
         <p>Harga Design</p>
         <h5>{cloth_sides.length} design @{`${designPrice}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</h5>
         <p>Total Harga</p>
         <h5>Rp. {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</h5>
-        <p className="secondary-text">Total {totalOrder} buah</p>
+        <p className="secondary-text">Total {totalOrder} buah {clothName}</p>
         <FormGroup>
           <Divider />
-          <Button type="submit" block appearance="primary">Pesan</Button>
+          <Button disabled={loading} loading={loading} type="submit" block appearance="primary">Pesan</Button>
         </FormGroup>
       </Form>
     </Panel>

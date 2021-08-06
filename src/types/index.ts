@@ -68,7 +68,7 @@ export interface OrderClothSideAttributes extends ModelInstance {
 }
 
 export interface RawOrderClothSideAttributes {
-  design_file: File;
+  design_file: File | string;
   design_width: number;
   design_height: number;
   design_x: number;

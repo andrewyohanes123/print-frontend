@@ -1,5 +1,5 @@
 import { FC, ReactElement, createContext, useState, useCallback } from 'react'
-import { RawOrderClothSideAttributes } from 'types'
+import { OrderAttributes, RawOrderClothSideAttributes } from 'types'
 import Layout from './Layout'
 
 type editorContextType = {
@@ -15,6 +15,8 @@ type editorContextType = {
   setColor: (color: string) => void;
   color_id?: number;
   setColorId: (color: number) => void;
+  orderSuccess?: OrderAttributes;
+  setOrderSuccess: (order: OrderAttributes) => void;
 }
 
 export const EditorContext = createContext<editorContextType>({
@@ -25,7 +27,8 @@ export const EditorContext = createContext<editorContextType>({
   setStep: () => console.log('object'),
   color: 'white',
   setColor: (color) => console.log(color),
-  setColorId: (color) => console.log(color)
+  setColorId: (color) => console.log(color),
+  setOrderSuccess: (order) => console.log(order)
 });
 
 const Editor: FC = (): ReactElement => {
@@ -35,15 +38,15 @@ const Editor: FC = (): ReactElement => {
   const [color_id, setColorId] = useState<number | undefined>(undefined);
   const [step, setStep] = useState<number>(0);
   const [color, setColor] = useState<string>('white');
+  const [orderSuccess, setOrderSuccess] = useState<OrderAttributes | undefined>(undefined);
 
   const setClothSide = useCallback((side: RawOrderClothSideAttributes) => {
-    console.log(side)
     const newClothSides = [...cloth_sides.filter(sd => sd.cloth_side_id !== side.cloth_side_id), side];
     setClothSides(newClothSides);
   }, [cloth_sides]);
 
   return (
-    <EditorContext.Provider value={{ cloth_id, setClothId, setClothSide, cloth_sides, setClothSideId, cloth_side_id, setStep, step, color, setColor, setColorId, color_id }}>
+    <EditorContext.Provider value={{ cloth_id, setClothId, setClothSide, cloth_sides, setClothSideId, cloth_side_id, setStep, step, color, setColor, setColorId, color_id, orderSuccess, setOrderSuccess }}>
       <Layout />
     </EditorContext.Provider>
   )
