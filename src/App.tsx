@@ -4,16 +4,17 @@ import Adapter from '@edgarjeremy/sirius.adapter'
 import { IModelFactory } from '@edgarjeremy/sirius.adapter';
 import AuthProvider from '@edgarjeremy/sirius.adapter/dist/libs/AuthProvider';
 import Home from './pages/Home'
+import moment from 'moment';
 import Dashboard from './pages/Dashboard';
-import 'rsuite/dist/styles/rsuite-default.css';
-import './App.css'
 import useAuth from 'hooks/useAuth';
 import useModels from 'hooks/useModels';
 import FullscreenDiv, { Header } from 'components/FullscreenDiv';
 import { Button, Loader } from 'rsuite';
-import moment from 'moment';
 import Login from 'pages/Login';
 import Editor from 'pages/Editor';
+import 'moment/locale/id'
+import 'rsuite/dist/styles/rsuite-default.css';
+import './App.css'
 
 const { REACT_APP_IP_ADDRESS, REACT_APP_PORT }: NodeJS.ProcessEnv = process.env;
 

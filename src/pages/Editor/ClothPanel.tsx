@@ -22,6 +22,7 @@ const ClothPanel: FC<props> = ({ cloth }): ReactElement => {
         setClothId(cloth.id);
         setStep(1)
       }}
+      className="clickable-panel"
     >
       <h5>{cloth.name}</h5>
       <p className="secondary-text"><small>Rp. {cloth.price}</small></p>

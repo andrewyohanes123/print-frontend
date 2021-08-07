@@ -5,7 +5,7 @@ import FullscreenDiv, { Header, SubHeader } from 'components/FullscreenDiv';
 
 const Clothes = lazy(() => import('../Clothes/Routes'));
 const DashboardHomePage = lazy(() => import('../DashboardHomePage'));
-const Orders = lazy(() => import('../Orders'));
+const Orders = lazy(() => import('../Orders/Routes'));
 
 const Routes: FC = (): ReactElement => {
   const { path } = useRouteMatch();

@@ -40,7 +40,9 @@ const Layout: FC = (): ReactElement => {
           </FlexboxGrid.Item>
           {
             typeof cloth_id !== 'undefined' ?
-              <Canvas />
+              <FlexboxGrid.Item colspan={11}>
+                <Canvas />
+              </FlexboxGrid.Item>
               :
               <FlexboxGrid.Item sm={24} smHidden md={24} style={{ height: '100%' }} colspan={11} >
                 <Panel bordered>

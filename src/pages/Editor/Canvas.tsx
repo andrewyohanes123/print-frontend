@@ -1,6 +1,6 @@
 import { FC, ReactElement, useRef, useEffect, useState, useCallback, useLayoutEffect, useContext } from "react"
 import { Stage, Layer, Rect, Text } from 'react-konva'
-import { Button, Divider, FlexboxGrid, Grid, Row, Col } from 'rsuite'
+import { Button, Divider, Grid, Row, Col } from 'rsuite'
 import { Transformer } from "konva/lib/shapes/Transformer";
 import { Image } from "konva/lib/shapes/Image";
 import { Stage as StageInstance } from "konva/lib/Stage";
@@ -16,7 +16,11 @@ import { ColorDisplay } from "components/ColorDisplay";
 import { ColorDisplayPanel } from "components/ColorDisplayPanel";
 import CanvasSideSelector from "./CanvasSideSelector";
 
-const Canvas: FC = (): ReactElement => {
+interface props {
+  preview?: boolean;
+}
+
+const Canvas: FC<props> = ({preview: previewCanvas}): ReactElement => {
   const trRef = useRef<Transformer>(null);
   const imgRef = useRef<Image>(null);
   const stageRef = useRef<StageInstance>(null);
@@ -80,13 +84,17 @@ const Canvas: FC = (): ReactElement => {
 
   useEffect(() => {
     getFirstClothSide();
-  }, [getFirstClothSide])
+  }, [getFirstClothSide]);
 
   useEffect(() => {
-    togglePreview(false);
+    typeof previewCanvas !== 'undefined' && togglePreview(true);
+  }, [previewCanvas]);
+
+  useEffect(() => {
+    togglePreview(step >= 2);
     getFirstClothSide();
     // eslint-disable-next-line
-  }, [cloth_side_id]);
+  }, [cloth_side_id, step]);
 
   useEffect(() => {
     getColors();
@@ -107,7 +115,7 @@ const Canvas: FC = (): ReactElement => {
   }, [trRef, imgRef, preview]);
 
   useEffect(() => {
-    if (step > 2) {
+    if (step >= 2) {
       togglePreview(true);
     }
   }, [step])
@@ -120,8 +128,7 @@ const Canvas: FC = (): ReactElement => {
     }
   }, [stageRef, cloth_side_id])
 
-  return (
-    <FlexboxGrid.Item colspan={11}>
+  return (    
       <div ref={flexBoxRef}>
         <Stage ref={stageRef} width={canvasSize} height={canvasSize}>
           <EditorContext.Provider value={{ cloth_id, cloth_sides, cloth_side_id, setClothSide, setClothId, setClothSideId, step, setStep, color, setColor, setColorId, color_id, ...rest }}>
@@ -192,11 +199,10 @@ const Canvas: FC = (): ReactElement => {
           <Button color="blue" onClick={savePicture} style={{ marginBottom: 8 }} block>Simpan gambar</Button>
         }
         {
-          step > 2 &&
+          step >= 2 &&
           <CanvasSideSelector />
         }
       </div>
-    </FlexboxGrid.Item>
   )
 }
 

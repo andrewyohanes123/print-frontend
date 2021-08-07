@@ -20,7 +20,7 @@ const model = Schema.Model({
 
 const FormSection: FC = (): ReactElement => {
   const { models: { Cloth, Order } } = useModels();
-  const { cloth_id, cloth_sides, setStep, setOrderSuccess } = useContext(EditorContext);
+  const { cloth_id, cloth_sides, setStep, setOrderSuccess, color_id } = useContext(EditorContext);
   const [price, setPrice] = useState<number>(100);
   const [clothName, setClothName] = useState<string>('');
   const [retry, setRetry] = useState<number>(0);
@@ -49,7 +49,9 @@ const FormSection: FC = (): ReactElement => {
       const order = await Order.create({
         ...formValues,
         order_counts: orderAmount,
-        cloth_sides: files
+        cloth_sides: files,
+        cloth_id,
+        color_id
       })
       toggleLoading(false);
       setOrderSuccess(order as OrderAttributes);
@@ -58,7 +60,7 @@ const FormSection: FC = (): ReactElement => {
     } catch (error) {
       errorCatch(error);
     }
-  }, [cloth_sides, formValues, orderAmount, Order, errorCatch, setStep, setOrderSuccess]);
+  }, [cloth_sides, formValues, orderAmount, Order, errorCatch, setStep, setOrderSuccess, color_id, cloth_id]);
 
   useEffect(() => {
     (retry < 4) && getClothPrice();
@@ -74,7 +76,7 @@ const FormSection: FC = (): ReactElement => {
     formValues.custom_cloth ?
       (designPrice * totalOrder)
       :
-      (price * totalOrder) + designPrice),
+      (price * totalOrder) + (designPrice * totalOrder)),
     [price, designPrice, totalOrder, formValues]);
 
   return (

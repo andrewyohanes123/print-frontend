@@ -6,7 +6,7 @@ type editorContextType = {
   cloth_id?: number;
   setClothId: (id: number) => void;
   cloth_sides: RawOrderClothSideAttributes[],
-  setClothSide?: (side: RawOrderClothSideAttributes) => void;
+  setClothSide: (side: RawOrderClothSideAttributes) => void;
   cloth_side_id?: number;
   setClothSideId: (id: number) => void;
   step: number;
@@ -17,6 +17,7 @@ type editorContextType = {
   setColorId: (color: number) => void;
   orderSuccess?: OrderAttributes;
   setOrderSuccess: (order: OrderAttributes) => void;
+  setClothSides?: (sides: RawOrderClothSideAttributes[]) => void;
 }
 
 export const EditorContext = createContext<editorContextType>({
@@ -28,7 +29,8 @@ export const EditorContext = createContext<editorContextType>({
   color: 'white',
   setColor: (color) => console.log(color),
   setColorId: (color) => console.log(color),
-  setOrderSuccess: (order) => console.log(order)
+  setOrderSuccess: (order) => console.log(order),
+  setClothSide: (cloth) => console.log(cloth)
 });
 
 const Editor: FC = (): ReactElement => {

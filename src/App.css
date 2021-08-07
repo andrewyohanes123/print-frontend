@@ -33,3 +33,9 @@ html, body, div#root {
 .text-center {
   text-align: center;
 }
+
+.clickable-panel {
+  cursor: pointer;
+  transition: .25s ease-in-out;
+  user-select: none;
+}

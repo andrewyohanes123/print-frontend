@@ -16,7 +16,7 @@ const ClothSidePanel: FC<props> = ({ side, idx, onClick }): ReactElement => {
   const active = useMemo(() => (idx === 0 && typeof cloth_side_id === 'undefined') || (cloth_side_id === side.id), [idx, cloth_side_id, side]);
 
   return (
-    <Panel onClick={onClick} shaded={active} key={side.id} bodyFill bordered>
+    <Panel className="clickable-panel" onClick={onClick} shaded={active} key={side.id} bodyFill bordered>
       <img draggable={false} style={{ width: '100%' }} alt={side.name} src={`${baseUrl}/public/files/${side.cloth_base}`} />
       <Panel className={active ? 'cloth-side-active' : ''}>
         <p><small>{side.name}</small></p>
