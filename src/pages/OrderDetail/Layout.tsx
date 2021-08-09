@@ -1,6 +1,6 @@
 import { FC, ReactElement, useCallback, useContext, useEffect, useState } from "react"
 import { useHistory, useParams } from "react-router-dom";
-import { Divider, Grid, Row, Col } from "rsuite";
+import { Divider, Placeholder, FlexboxGrid, Button, Icon } from "rsuite";
 import PageHeader from "components/PageHeader"
 import useModels from "hooks/useModels";
 import { OrderAttributes, OrderClothSideAttributes } from "types";
@@ -11,6 +11,7 @@ import Container from "components/Container";
 import { EditorContext } from "pages/Editor";
 import { baseUrl } from "App";
 import OrderClothSides from "./OrderClothSides";
+import OrderCounts from "./OrderCounts";
 
 const Layout: FC = (): ReactElement => {
   const [order, setOrder] = useState<OrderAttributes | undefined>(undefined);
@@ -20,17 +21,18 @@ const Layout: FC = (): ReactElement => {
   const { models: { Order, OrderClothSide } } = useModels();
   const { id } = useParams<{ id: string }>();
   const { errorCatch } = useErrorCatcher();
-  const { setColor, setClothSides, setClothSideId } = useContext(EditorContext);
+  const { setColor, setClothSides, setClothSideId, setClothId, cloth_id } = useContext(EditorContext);
 
   const getOrderDetail = useCallback(() => {
     Order.single(parseInt(id)).then(resp => {
       setOrder(resp as OrderAttributes);
       setColor(resp.color.color);
+      setClothId(resp.cloth_id);
     }).catch(e => {
       errorCatch(e);
       setRetry(attempt => attempt + 1);
     });
-  }, [Order, id, errorCatch, setColor]);
+  }, [Order, id, errorCatch, setColor, setClothId]);
 
   const getOrderSides = useCallback(() => {
     OrderClothSide.collection({
@@ -41,6 +43,9 @@ const Layout: FC = (): ReactElement => {
       include: [{
         model: 'ClothSide',
         attributes: ['name']
+      }, {
+        model: 'Cloth',
+        attributes: ['price']
       }]
     }).then(resp => {
       setOrderSides(resp.rows as OrderClothSideAttributes[]);
@@ -69,19 +74,22 @@ const Layout: FC = (): ReactElement => {
       <PageHeader title="Detail Order" subtitle={order?.name ?? 'Loading...'} onBack={() => push('/dashboard/order')} />
       <Divider />
       <Container>
-        <Grid fluid>
-          <Row gutter={8}>
-            <Col md={10}>
-              {typeof order !== 'undefined' &&
-                <OrderPanel order={order} />
-              }
-              <OrderClothSides sides={orderSides} />
-            </Col>
-            <Col md={14}>
-              <Canvas />
-            </Col>
-          </Row>
-        </Grid>
+        <Button style={{ marginBottom: 8 }} color="green"><Icon icon="check" />&nbsp;Konfirmasi pemesanan</Button>
+        <FlexboxGrid justify="space-between">
+          <FlexboxGrid.Item colspan={11}>
+            {typeof order !== 'undefined' &&
+              <OrderPanel order={order} />
+            }
+            <OrderClothSides sides={orderSides} />
+            {typeof order !== 'undefined' && <OrderCounts cloth_price={order.cloth.price} />}
+          </FlexboxGrid.Item>
+          <FlexboxGrid.Item colspan={12}>
+            {typeof cloth_id === 'undefined' ?
+              <Placeholder.Graph />
+              :
+              <Canvas />}
+          </FlexboxGrid.Item>
+        </FlexboxGrid>
       </Container>
     </>
   )

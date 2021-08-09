@@ -1,12 +1,10 @@
 import { EditorContext } from "pages/Editor";
 import { FC, ReactElement, useCallback, useState } from "react";
-import { useParams } from "react-router-dom";
 import { OrderAttributes, RawOrderClothSideAttributes } from "types";
 import Layout from "./Layout";
 
 const OrderDetail: FC = (): ReactElement => {
-  const { id } = useParams<{ id: string }>();
-  const [cloth_id, setClothId] = useState<number>(parseInt(id));
+  const [cloth_id, setClothId] = useState<number | undefined>(undefined);
   const [cloth_sides, setClothSides] = useState<RawOrderClothSideAttributes[]>([]);
   const [cloth_side_id, setClothSideId] = useState<number | undefined>(undefined);
   const [color_id, setColorId] = useState<number | undefined>(undefined);

@@ -132,8 +132,8 @@ const Canvas: FC<props> = ({preview: previewCanvas}): ReactElement => {
       <div ref={flexBoxRef}>
         <Stage ref={stageRef} width={canvasSize} height={canvasSize}>
           <EditorContext.Provider value={{ cloth_id, cloth_sides, cloth_side_id, setClothSide, setClothId, setClothSideId, step, setStep, color, setColor, setColorId, color_id, ...rest }}>
-            <Layer>
-              <Rect width={640} height={800} fill={loading ? 'white' : color} />
+            <Layer key="base_layer">
+              <Rect width={canvasSize} height={canvasSize} fill={loading ? 'white' : color} />
               {preview &&
                 <>
                   {cloth_sides.filter(side => side.cloth_side_id === cloth_side_id).map(side => (
@@ -146,28 +146,30 @@ const Canvas: FC<props> = ({preview: previewCanvas}): ReactElement => {
                       initialWidth={side.design_width}
                       preview={preview}
                       originalFile={side.design_file as File}
+                      canvasSize={canvasSize}
                     />
                   ))}
                 </>}
               <CanvasImage src={clothBase} key={clothBase} globalCompositeOperation="overlay" opacity={0.8} canvasSize={canvasSize} />
-              <CanvasImage src={clothBase} globalCompositeOperation="multiply" opacity={0.9} onLoad={() => toggleLoading(false)} canvasSize={canvasSize} />
+              <CanvasImage src={clothBase} key={`multiply${clothBase}`} globalCompositeOperation="multiply" opacity={0.9} onLoad={() => toggleLoading(false)} canvasSize={canvasSize} />
               <CanvasImage src={clothBackground} key={clothBackground} canvasSize={canvasSize} />
               {loading && <Text text="Loading gambar pakaian" x={canvasSize / 2} y={canvasSize / 2} />}
               {/* <Img width={canvasSize} height={canvasSize} globalCompositeOperation="overlay" opacity={0.3} image={cloth} /> */}
               {/* <Img width={canvasSize} height={canvasSize} globalCompositeOperation="multiply" opacity={0.75} image={cloth} /> */}
               {/* <Img width={canvasSize} height={canvasSize} image={background} /> */}
             </Layer>
-            {!preview && <Layer>
+            {!preview && <Layer key="design_layer">
               {cloth_sides.filter(side => side.cloth_side_id === cloth_side_id).map(side => (
                 <DesignImage
                   initialX={side.design_x}
                   initialY={side.design_y}
                   key={`${side.cloth_side_id}${clothBackground}`}
-                  src={URL.createObjectURL(side.design_file)}
+                  src={typeof side.design_file !== 'string' ? URL.createObjectURL(side.design_file) : side.design_file}
                   initialHeight={side.design_height}
                   initialWidth={side.design_width}
                   preview={preview}
                   originalFile={side.design_file as File}
+                  canvasSize={canvasSize}
                 />
               ))}
             </Layer>}

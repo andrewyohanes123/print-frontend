@@ -1,6 +1,6 @@
-import moment from "moment"
 import { FC, ReactElement } from "react"
 import {Panel} from 'rsuite'
+import moment from "moment"
 import { OrderAttributes } from "types"
 import DetailPanel from "./DetailPanel"
 
@@ -10,11 +10,12 @@ interface props {
 
 const OrderPanel: FC<props> = ({order}): ReactElement => {
   return (
-    <Panel bordered>
+    <Panel header={<h6>Data Orderan</h6>} defaultExpanded={true} collapsible bordered>
       <DetailPanel label="Nama pemesan" value={order.name} />
       <DetailPanel label="Email pemesan" value={order.email} />
       <DetailPanel label="Nomor telepon" value={order.phone} />
       <DetailPanel label="Dipesan pada" value={moment(order.updated_at).format('DD MMM YYYY hh:mm:ss')} />
+      <DetailPanel label="Deskripsi" value={order.description} />
     </Panel>
   )
 }

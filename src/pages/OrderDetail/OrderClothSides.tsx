@@ -10,7 +10,7 @@ interface props {
 const OrderClothSides: FC<props> = ({ sides }): ReactElement => {
 
   return (
-    <Panel style={{ marginTop: 8 }} bodyFill bordered>
+    <Panel header={<h6>File Design</h6>} defaultExpanded collapsible style={{ marginTop: 8 }} bodyFill bordered>
       <List style={{ paddingRight: 4, paddingLeft: 4 }}>
         {sides.map(side => <OrderClothSidePanel key={side.id} side={side} />)}
       </List>

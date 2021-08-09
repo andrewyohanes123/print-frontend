@@ -14,8 +14,8 @@ const Uploader: FC = (): ReactElement => {
       const fileReader = new FileReader();
 
       fileReader.readAsDataURL(file.blobFile!);
-      const maxWidth: number = 400;
-      const maxHeight: number = 400;
+      const maxWidth: number = 40;
+      const maxHeight: number = 40;
       fileReader.onload = () => {
         const img = new Image();
         img.onload = () => {
