@@ -7,6 +7,7 @@ const Clothes = lazy(() => import('pages/Clothes/Routes'));
 const DashboardHomePage = lazy(() => import('pages/DashboardHomePage'));
 const Orders = lazy(() => import('pages/Orders/Routes'));
 const Portfolio = lazy(() => import('pages/Portfolio'));
+const AboutUs = lazy(() => import('pages/AboutUs'));
 
 const Routes: FC = (): ReactElement => {
   const { path } = useRouteMatch();
@@ -21,6 +22,7 @@ const Routes: FC = (): ReactElement => {
         <Route path={`${path}/order`} component={Orders} />
         <Route path={`${path}/kaos`} component={Clothes} />
         <Route path={`${path}/portfolio`} component={Portfolio} />
+        <Route path={`${path}/tentang-kami`} component={AboutUs} />
       </Switch>
     </Suspense>
   )

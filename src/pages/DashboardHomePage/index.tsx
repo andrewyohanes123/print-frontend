@@ -4,7 +4,7 @@ import Container from 'components/Container'
 const DashboardHomePage: FC = (): ReactElement => {
   return (
     <Container>
-      <h1>tes</h1>
+      <h3>Dashboard</h3>
     </Container>
   )
 }

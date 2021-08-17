@@ -215,7 +215,7 @@ const Canvas: FC<props> = ({ preview: previewCanvas }): ReactElement => {
           </Grid>
         </>}
       {
-        login &&
+        (previewCanvas && login) &&
         <Button color="green" onClick={!uploading ? savePictureToPortFolio : undefined} loading={uploading} block style={{ marginBottom: 8 }}>Tambah Gambar ke Portfolio</Button>
       }
       {step === 3 &&

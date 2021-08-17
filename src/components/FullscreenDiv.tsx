@@ -43,7 +43,8 @@ const FullscreenDiv = styled.div<props>(({ background, flex, justifyContent, ali
   display: flex ? 'flex' : 'block',
   justifyContent: flex ? justifyContent ?? 'flex-start' : undefined,
   alignItems: flex ? alignItems ?? 'flex-start' : undefined,
-  flexDirection
+  flexDirection,
+  padding: '2.5em'
 }));
 
 FullscreenDiv.defaultProps = {

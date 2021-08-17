@@ -87,7 +87,7 @@ const Layout: FC = (): ReactElement => {
             {typeof cloth_id === 'undefined' ?
               <Placeholder.Graph />
               :
-              <Canvas />}
+              <Canvas preview={true} />}
           </FlexboxGrid.Item>
         </FlexboxGrid>
       </Container>

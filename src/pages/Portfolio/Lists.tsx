@@ -27,7 +27,7 @@ const Lists: FC<props> = ({ data, pagination: { limit, onSelect, page, total }, 
           <Row>
             {data.map(portfolio => (
               <Col key={`${portfolio.id} ${portfolio.picture}`} md={8}>
-                <Panel bodyFill bordered>
+                <Panel className="mb-2" bodyFill bordered>
                   <img
                     alt={`${portfolio.picture}`}
                     src={`${baseUrl}/public/files/${portfolio.picture}`}
