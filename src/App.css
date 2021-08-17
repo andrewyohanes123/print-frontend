@@ -11,7 +11,10 @@ html, body, div#root {
 }
 
 .cloth-display {
+  width: 100%;
+  height: auto;
   border-bottom: 1px solid #e5e5ea;
+  user-select: none;
 }
 
 .cloth-side-active {

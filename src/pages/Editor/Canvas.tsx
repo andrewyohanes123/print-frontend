@@ -1,10 +1,10 @@
 import { FC, ReactElement, useRef, useEffect, useState, useCallback, useLayoutEffect, useContext } from "react"
 import { Stage, Layer, Rect, Text } from 'react-konva'
-import { Button, Divider, Grid, Row, Col } from 'rsuite'
+import { Button, Divider, Grid, Row, Col, Alert } from 'rsuite'
 import { Transformer } from "konva/lib/shapes/Transformer";
 import { Image } from "konva/lib/shapes/Image";
 import { Stage as StageInstance } from "konva/lib/Stage";
-import {saveAs} from 'file-saver'
+import { saveAs } from 'file-saver'
 import useModels from "hooks/useModels";
 import useErrorCatcher from "hooks/useErrorCatcher";
 import { EditorContext } from ".";
@@ -15,12 +15,13 @@ import { ColorAttributes } from "types";
 import { ColorDisplay } from "components/ColorDisplay";
 import { ColorDisplayPanel } from "components/ColorDisplayPanel";
 import CanvasSideSelector from "./CanvasSideSelector";
+import useAuth from "hooks/useAuth";
 
 interface props {
   preview?: boolean;
 }
 
-const Canvas: FC<props> = ({preview: previewCanvas}): ReactElement => {
+const Canvas: FC<props> = ({ preview: previewCanvas }): ReactElement => {
   const trRef = useRef<Transformer>(null);
   const imgRef = useRef<Image>(null);
   const stageRef = useRef<StageInstance>(null);
@@ -31,8 +32,10 @@ const Canvas: FC<props> = ({preview: previewCanvas}): ReactElement => {
   const [preview, togglePreview] = useState<boolean>(false);
   const [colors, setColors] = useState<ColorAttributes[]>([]);
   const [loading, toggleLoading] = useState<boolean>(false);
-  const { models: { Color, ClothSide } } = useModels();
+  const [uploading, toggleUploading] = useState<boolean>(false);
+  const { models: { Color, ClothSide, Portfolio } } = useModels();
   const { errorCatch } = useErrorCatcher();
+  const { login } = useAuth();
   const {
     cloth_id,
     cloth_sides,
@@ -126,85 +129,103 @@ const Canvas: FC<props> = ({preview: previewCanvas}): ReactElement => {
       // console.log(link)
       saveAs(link, `Mockup Design ${cloth_side_id}.png`);
     }
-  }, [stageRef, cloth_side_id])
+  }, [stageRef, cloth_side_id]);
 
-  return (    
-      <div ref={flexBoxRef}>
-        <Stage ref={stageRef} width={canvasSize} height={canvasSize}>
-          <EditorContext.Provider value={{ cloth_id, cloth_sides, cloth_side_id, setClothSide, setClothId, setClothSideId, step, setStep, color, setColor, setColorId, color_id, ...rest }}>
-            <Layer key="base_layer">
-              <Rect width={canvasSize} height={canvasSize} fill={loading ? 'white' : color} />
-              {preview &&
-                <>
-                  {cloth_sides.filter(side => side.cloth_side_id === cloth_side_id).map(side => (
-                    <DesignImage
-                      initialX={side.design_x}
-                      initialY={side.design_y}
-                      key={`${side.cloth_side_id}${clothBase}`}
-                      src={typeof side.design_file !== 'string' ? URL.createObjectURL(side.design_file) : side.design_file}
-                      initialHeight={side.design_height}
-                      initialWidth={side.design_width}
-                      preview={preview}
-                      originalFile={side.design_file as File}
-                      canvasSize={canvasSize}
-                    />
-                  ))}
-                </>}
-              <CanvasImage src={clothBase} key={clothBase} globalCompositeOperation="overlay" opacity={0.8} canvasSize={canvasSize} />
-              <CanvasImage src={clothBase} key={`multiply${clothBase}`} globalCompositeOperation="multiply" opacity={0.9} onLoad={() => toggleLoading(false)} canvasSize={canvasSize} />
-              <CanvasImage src={clothBackground} key={clothBackground} canvasSize={canvasSize} />
-              {loading && <Text text="Loading gambar pakaian" x={canvasSize / 2} y={canvasSize / 2} />}
-              {/* <Img width={canvasSize} height={canvasSize} globalCompositeOperation="overlay" opacity={0.3} image={cloth} /> */}
-              {/* <Img width={canvasSize} height={canvasSize} globalCompositeOperation="multiply" opacity={0.75} image={cloth} /> */}
-              {/* <Img width={canvasSize} height={canvasSize} image={background} /> */}
-            </Layer>
-            {!preview && <Layer key="design_layer">
-              {cloth_sides.filter(side => side.cloth_side_id === cloth_side_id).map(side => (
-                <DesignImage
-                  initialX={side.design_x}
-                  initialY={side.design_y}
-                  key={`${side.cloth_side_id}${clothBackground}`}
-                  src={typeof side.design_file !== 'string' ? URL.createObjectURL(side.design_file) : side.design_file}
-                  initialHeight={side.design_height}
-                  initialWidth={side.design_width}
-                  preview={preview}
-                  originalFile={side.design_file as File}
-                  canvasSize={canvasSize}
-                />
-              ))}
-            </Layer>}
-          </EditorContext.Provider>
-        </Stage>
-        <Divider />
-        {step < 2 &&
-          <>
-            <Button style={{ marginBottom: 8 }} onClick={() => togglePreview(!preview)} appearance="primary" block>{preview ? "Edit Mockup" : `Preview Mockup`}</Button>
-            <Grid fluid>
-              <Row gutter={6}>
-                {
-                  colors.map(clr => (
-                    <Col sm={4} md={4} key={`${clr.id}-${clr.name}`}>
-                      <ColorDisplayPanel onClick={() => {
-                        setColor(clr.color);
-                        setColorId(clr.id)
-                      }} className={color === clr.color ? 'color-display-active' : ''}>
-                        <ColorDisplay size={30} backgroundColor={clr.color} />
-                        <p style={{ textAlign: 'center' }}>{clr.name}</p>
-                      </ColorDisplayPanel>
-                    </Col>
-                  ))
-                }
-              </Row>
-            </Grid>
-          </>}
-        {step === 3 &&
-          <Button color="blue" onClick={savePicture} style={{ marginBottom: 8 }} block>Simpan gambar</Button>
-        }
-        {
-          step >= 2 &&
-          <CanvasSideSelector />
-        }
-      </div>
+  const savePictureToPortFolio = useCallback((): void => {
+    if (stageRef.current !== null) {
+      toggleUploading(true);
+      const picture: string = stageRef.current.toDataURL({ pixelRatio: 2 });
+      Portfolio.create({ picture }).then(resp => {
+        Alert.success(`Gambah berhasil ditambah pada portfolio`);
+        console.log(resp.toJSON());
+        toggleUploading(false);
+      }).catch(e => {
+        errorCatch(e);
+      })
+    }
+  }, [errorCatch, Portfolio, stageRef]);
+
+  return (
+    <div ref={flexBoxRef}>
+      <Stage ref={stageRef} width={canvasSize} height={canvasSize}>
+        <EditorContext.Provider value={{ cloth_id, cloth_sides, cloth_side_id, setClothSide, setClothId, setClothSideId, step, setStep, color, setColor, setColorId, color_id, ...rest }}>
+          <Layer key="base_layer">
+            <Rect width={canvasSize} height={canvasSize} fill={loading ? 'white' : color} />
+            {preview &&
+              <>
+                {cloth_sides.filter(side => side.cloth_side_id === cloth_side_id).map(side => (
+                  <DesignImage
+                    initialX={side.design_x}
+                    initialY={side.design_y}
+                    key={`${side.cloth_side_id}${clothBase}`}
+                    src={typeof side.design_file !== 'string' ? URL.createObjectURL(side.design_file) : side.design_file}
+                    initialHeight={side.design_height}
+                    initialWidth={side.design_width}
+                    preview={preview}
+                    originalFile={side.design_file as File}
+                    canvasSize={canvasSize}
+                  />
+                ))}
+              </>}
+            <CanvasImage src={clothBase} key={clothBase} globalCompositeOperation="overlay" opacity={0.8} canvasSize={canvasSize} />
+            <CanvasImage src={clothBase} key={`multiply${clothBase}`} globalCompositeOperation="multiply" opacity={0.9} onLoad={() => toggleLoading(false)} canvasSize={canvasSize} />
+            <CanvasImage src={clothBackground} key={clothBackground} canvasSize={canvasSize} />
+            {loading && <Text text="Loading gambar pakaian" x={canvasSize / 2} y={canvasSize / 2} />}
+            {/* <Img width={canvasSize} height={canvasSize} globalCompositeOperation="overlay" opacity={0.3} image={cloth} /> */}
+            {/* <Img width={canvasSize} height={canvasSize} globalCompositeOperation="multiply" opacity={0.75} image={cloth} /> */}
+            {/* <Img width={canvasSize} height={canvasSize} image={background} /> */}
+          </Layer>
+          {!preview && <Layer key="design_layer">
+            {cloth_sides.filter(side => side.cloth_side_id === cloth_side_id).map(side => (
+              <DesignImage
+                initialX={side.design_x}
+                initialY={side.design_y}
+                key={`${side.cloth_side_id}${clothBackground}`}
+                src={typeof side.design_file !== 'string' ? URL.createObjectURL(side.design_file) : side.design_file}
+                initialHeight={side.design_height}
+                initialWidth={side.design_width}
+                preview={preview}
+                originalFile={side.design_file as File}
+                canvasSize={canvasSize}
+              />
+            ))}
+          </Layer>}
+        </EditorContext.Provider>
+      </Stage>
+      <Divider />
+      {step < 2 &&
+        <>
+          <Button style={{ marginBottom: 8 }} onClick={() => togglePreview(!preview)} appearance="primary" block>{preview ? "Edit Mockup" : `Preview Mockup`}</Button>
+          <Grid fluid>
+            <Row gutter={6}>
+              {
+                colors.map(clr => (
+                  <Col sm={4} md={4} key={`${clr.id}-${clr.name}`}>
+                    <ColorDisplayPanel onClick={() => {
+                      setColor(clr.color);
+                      setColorId(clr.id)
+                    }} className={color === clr.color ? 'color-display-active' : ''}>
+                      <ColorDisplay size={30} backgroundColor={clr.color} />
+                      <p style={{ textAlign: 'center' }}>{clr.name}</p>
+                    </ColorDisplayPanel>
+                  </Col>
+                ))
+              }
+            </Row>
+          </Grid>
+        </>}
+      {
+        login &&
+        <Button color="green" onClick={!uploading ? savePictureToPortFolio : undefined} loading={uploading} block style={{ marginBottom: 8 }}>Tambah Gambar ke Portfolio</Button>
+      }
+      {step === 3 &&
+        <Button color="blue" onClick={savePicture} style={{ marginBottom: 8 }} block>Simpan gambar</Button>
+      }
+      {
+        step >= 2 &&
+        <CanvasSideSelector />
+      }
+    </div>
   )
 }
 
