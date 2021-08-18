@@ -4,13 +4,14 @@ import { useHistory } from "react-router"
 import { EditorContext } from "."
 
 const Header: FC = (): ReactElement => {
-  const { step, setStep } = useContext(EditorContext);
+  const { step, setStep, setClothSides } = useContext(EditorContext);
   const { push } = useHistory();
 
   const back = useCallback(() => {
     step === 0 && push('/');
     step > 0 && setStep(step - 1);
-  }, [step, push, setStep]);
+    step === 1 && setClothSides!([]);
+  }, [step, push, setStep, setClothSides]);
 
   return (
     <Panel style={{ marginBottom: 10 }} bordered>

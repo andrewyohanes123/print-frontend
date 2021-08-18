@@ -1,5 +1,5 @@
 import { FC, ReactElement, useState, useEffect, useContext, useCallback, useMemo } from "react"
-import { Form, FormGroup, FormControl, ControlLabel, Panel, Divider, Button, Schema, Toggle, Message } from 'rsuite'
+import { Form, FormGroup, FormControl, ControlLabel, Panel, Divider, Button, Schema, Toggle, Message, InputNumber } from 'rsuite'
 import useModels from "hooks/useModels"
 import { EditorContext } from ".";
 import ClothSize, { OrderAmount } from "./ClothSize";
@@ -24,7 +24,7 @@ const FormSection: FC = (): ReactElement => {
   const [price, setPrice] = useState<number>(100);
   const [clothName, setClothName] = useState<string>('');
   const [retry, setRetry] = useState<number>(0);
-  const [formValues, setFormValues] = useState<{ [any: string]: any }>({});
+  const [formValues, setFormValues] = useState<{ [any: string]: any }>({ custom_cloth: false });
   const [orderAmount, setOrderAmount] = useState<OrderAmount[]>([]);
   const [loading, toggleLoading] = useState<boolean>(false);
   const { errorCatch } = useErrorCatcher();
@@ -92,7 +92,7 @@ const FormSection: FC = (): ReactElement => {
         </FormGroup>
         <FormGroup>
           <ControlLabel>Nomor Telepon</ControlLabel>
-          <FormControl disabled={loading} maxLength={14} placeholder="Nomor Telepon" name="phone" />
+          <FormControl accepter={InputNumber} style={{ width: '100%' }} disabled={loading} maxLength={14} placeholder="Nomor Telepon" name="phone" />
         </FormGroup>
         <FormGroup>
           <ControlLabel>Deskripsi Tambahan</ControlLabel>

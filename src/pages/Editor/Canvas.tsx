@@ -161,6 +161,7 @@ const Canvas: FC<props> = ({ preview: previewCanvas }): ReactElement => {
                     src={typeof side.design_file !== 'string' ? URL.createObjectURL(side.design_file) : side.design_file}
                     initialHeight={side.design_height}
                     initialWidth={side.design_width}
+                    initialRotation={side.design_rotation}
                     preview={preview}
                     originalFile={side.design_file as File}
                     canvasSize={canvasSize}
@@ -180,6 +181,7 @@ const Canvas: FC<props> = ({ preview: previewCanvas }): ReactElement => {
               <DesignImage
                 initialX={side.design_x}
                 initialY={side.design_y}
+                initialRotation={side.design_rotation}
                 key={`${side.cloth_side_id}${clothBackground}`}
                 src={typeof side.design_file !== 'string' ? URL.createObjectURL(side.design_file) : side.design_file}
                 initialHeight={side.design_height}

@@ -61,6 +61,7 @@ export interface OrderClothSideAttributes extends ModelInstance {
   design_x: number;
   design_y: number;
   mockup_file: string;
+  design_rotation: number;
   order_id?: number;
   cloth_side_id?: number;
   created_at?: Date;
@@ -73,6 +74,7 @@ export interface RawOrderClothSideAttributes {
   design_height: number;
   design_x: number;
   design_y: number;
+  design_rotation: number;
   mockup_file?: string;
   cloth_side_id?: number;
   cloth_side_name?: string;
