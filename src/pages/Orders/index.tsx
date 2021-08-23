@@ -17,7 +17,7 @@ const Orders: FC = (): ReactElement => {
   const getOrders = useCallback(() => {
     const offset = (page - 1) * limit;
     Order.collection({
-      attributes: ['name', 'email', 'phone', 'confirmed', 'updated_at', 'order_number'],
+      attributes: ['name', 'email', 'phone', 'status', 'updated_at', 'order_number'],
       order: [['updated_at', 'desc']],
       limit,
       offset,

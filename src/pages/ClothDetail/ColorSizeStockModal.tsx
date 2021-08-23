@@ -37,7 +37,8 @@ const ColorSizeStockModal: FC<props> = ({ show, onHide, color }): ReactElement =
       }],
       where: {
         cloth_id
-      }
+      },
+      order: [['id', 'asc']]
     }).then(resp => {      
       console.log(resp);
       setSizes(resp.rows.filter(row => row.color_size_stocks.length === 0) as SizeAttributes[]);
@@ -63,9 +64,9 @@ const ColorSizeStockModal: FC<props> = ({ show, onHide, color }): ReactElement =
       attributes: ['cloth_id', 'color_id', 'stock', 'size_id'],
       include: [{
         model: 'Size',
-        attributes: ['size', 'id']
+        attributes: ['size', 'id'],
       }],
-      order: [['id', 'asc']]
+      // order: [['id', 'asc']]
     }).then(resp => {
       setStocks(resp.rows as ColorSizeStockAttributes[]);
       toggleLoading(false);
@@ -114,7 +115,7 @@ const ColorSizeStockModal: FC<props> = ({ show, onHide, color }): ReactElement =
             :
             stocks.length > 0 ?
               stocks.map(stock => (
-                <StockPanel stock={stock} onUpdateStock={getStocks} />
+                <StockPanel stock={stock} key={`${stock.id}`} onUpdateStock={getStocks} />
               ))
               :
               <p className="secondary-text" style={{ textAlign: 'center' }}>Tambah stock untuk warna <code>{color.name}</code></p>

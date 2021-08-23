@@ -15,6 +15,7 @@ import Editor from 'pages/Editor';
 import 'moment/locale/id'
 import 'rsuite/dist/styles/rsuite-default.css';
 import './App.css'
+import CheckOrder from 'pages/CheckOrder';
 
 const { REACT_APP_IP_ADDRESS, REACT_APP_PORT }: NodeJS.ProcessEnv = process.env;
 
@@ -91,6 +92,7 @@ function App() {
           <Route path={'/dashboard'} component={Dashboard} />
           <Route path={'/login'} component={Login} />
           <Route path={'/editor'} component={Editor} />
+          <Route path={'/cek-pesanan'} component={CheckOrder} />
         </Switch>
       </Router>
   )

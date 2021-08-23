@@ -13,7 +13,7 @@ const Header: FC = (): ReactElement => {
   }, [push])
 
   return (
-    <Navbar appearance="inverse">
+    <Navbar appearance="subtle">
       <Navbar.Header>
         <img alt="t-design logo" className="navbar-brand logo" src={logo} style={{ width: 80, marginTop: 5, marginLeft: 5, marginRight: 7 }} />
       </Navbar.Header>
