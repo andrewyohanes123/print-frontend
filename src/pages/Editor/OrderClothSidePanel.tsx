@@ -1,7 +1,8 @@
 import { ClothSideImg } from "components/ClothSideImg"
 import useModels from "hooks/useModels"
-import { FC, ReactElement, useCallback, useEffect, useState } from "react"
+import { FC, ReactElement, useCallback, useContext, useEffect, useState } from "react"
 import { Panel, FlexboxGrid, IconButton, Icon } from "rsuite"
+import { EditorContext } from "."
 
 interface props {
   alt?: string;
@@ -11,6 +12,7 @@ interface props {
 
 const OrderClothSidePanel: FC<props> = ({ src, alt, cloth_side_id }): ReactElement => {
   const { models: { ClothSide } } = useModels();
+  const { setClothSides, cloth_sides } = useContext(EditorContext);
   const [side, setSide] = useState<string>('');
   const [retryCount, setRetryCount] = useState<number>(0);
 
@@ -21,6 +23,11 @@ const OrderClothSidePanel: FC<props> = ({ src, alt, cloth_side_id }): ReactEleme
       setRetryCount((count: number) => count + 1);
     });
   }, [cloth_side_id, ClothSide]);
+
+  const removeClothSide = useCallback(() => {
+    const new_cloth_sides = cloth_sides.filter(side => side.cloth_side_id !== cloth_side_id);
+    setClothSides!(new_cloth_sides);
+  }, [cloth_side_id, cloth_sides, setClothSides]);
 
   useEffect(() => {
     if (retryCount < 4) getClothSide();
@@ -37,7 +44,7 @@ const OrderClothSidePanel: FC<props> = ({ src, alt, cloth_side_id }): ReactEleme
           <p><b>Harga&nbsp;:</b>&nbsp;Rp. &nbsp;25,000</p>
         </FlexboxGrid.Item>
         <FlexboxGrid.Item style={{ padding: 8 }}>
-          <IconButton size="sm" color="red" icon={<Icon icon="close" />} />
+          <IconButton onClick={removeClothSide} size="sm" color="red" icon={<Icon icon="close" />} />
         </FlexboxGrid.Item>
       </FlexboxGrid>
     </Panel>

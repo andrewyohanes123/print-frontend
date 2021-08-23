@@ -1,6 +1,6 @@
 import { FC, ReactElement, useCallback, useContext, useEffect, useState } from "react"
 import { useHistory, useParams } from "react-router-dom";
-import { Divider, Placeholder, FlexboxGrid, Button, Icon } from "rsuite";
+import { Divider, Placeholder, FlexboxGrid, Button, Icon, Alert } from "rsuite";
 import PageHeader from "components/PageHeader"
 import useModels from "hooks/useModels";
 import { OrderAttributes, OrderClothSideAttributes } from "types";
@@ -69,12 +69,29 @@ const Layout: FC = (): ReactElement => {
     // eslint-disable-next-line
   }, [orderSides]);
 
+  const changeOrderStatus = useCallback(() => {
+    if (typeof order !== 'undefined') {
+      const status = order.status === 'Menunggu Konfirmasi' ? 'Sementara Diproses' : order.status === 'Sementara Diproses' ? 'Pesanan Selesai' : '';
+      order.update({ status }).then(resp => {
+        Alert.success(`Status pesanan ${resp.name} berhasil diubah`);
+        getOrderDetail();
+      }).catch(errorCatch);
+    }
+  }, [order, getOrderDetail, errorCatch]);
+
   return (
     <>
       <PageHeader title="Detail Order" subtitle={order?.name ?? 'Loading...'} onBack={() => push('/dashboard/order')} />
       <Divider />
       <Container>
-        <Button style={{ marginBottom: 8 }} color="green"><Icon icon="check" />&nbsp;Konfirmasi pemesanan</Button>
+        {
+          order?.status === 'Pesanan Selesai' ?
+            <Button disabled style={{ marginBottom: 8 }} color="green"><Icon icon="check" />&nbsp;Pesanan Selesai</Button>
+            :
+            <Button onClick={changeOrderStatus} style={{ marginBottom: 8 }} color="green"><Icon icon="check" />&nbsp;{
+              order?.status === 'Menunggu Konfirmasi' ? 'Proses Pesanan' : order?.status === 'Sementara Diproses' ? 'Selesaikan Pesanan' : ''
+            }</Button>
+        }
         <FlexboxGrid justify="space-between">
           <FlexboxGrid.Item colspan={11}>
             {typeof order !== 'undefined' &&

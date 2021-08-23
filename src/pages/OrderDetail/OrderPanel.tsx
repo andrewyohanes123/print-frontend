@@ -15,7 +15,8 @@ const OrderPanel: FC<props> = ({order}): ReactElement => {
       <DetailPanel label="Email pemesan" value={order.email} />
       <DetailPanel label="Nomor telepon" value={order.phone} />
       <DetailPanel label="Dipesan pada" value={moment(order.updated_at).format('DD MMM YYYY hh:mm:ss')} />
-      <DetailPanel label="Deskripsi" value={order.description} />
+      <DetailPanel label="Status Pesanan" value={order.status} />
+      <DetailPanel label="Deskripsi" value={order.description === null ? 'Tidak Ada Deskripsi' : order.description} />
     </Panel>
   )
 }
