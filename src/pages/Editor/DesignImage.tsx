@@ -14,6 +14,7 @@ interface props {
   initialHeight: number;
   initialX: number;
   initialY: number;
+  initialRotation: number;
   onLoad?: () => void;
   canvasSize: number;
 }
@@ -21,12 +22,13 @@ interface props {
 type scaleType = { width: number; height: number };
 type positionType = { x: number, y: number }
 
-const DesignImage: FC<props> = ({ src, preview, initialHeight, initialWidth, initialX, initialY, originalFile, onLoad, canvasSize }): ReactElement => {
+const DesignImage: FC<props> = ({ src, preview, initialHeight, initialWidth, initialX, initialY, originalFile, onLoad, canvasSize, initialRotation }): ReactElement => {
   const imgRef = useRef<ImageRef>(null);
   const trRef = useRef<TrRef>(null);
   const [image] = useImage(src, 'anonymous');
   const [coords, setCoords] = useState<positionType>({ x: initialX, y: initialY });
   const [scale, setScale] = useState<scaleType>({ width: initialWidth, height: initialHeight });
+  const [rotation, setRotation] = useState<number>(initialRotation);
   const { setClothSide, cloth_side_id } = useContext(EditorContext);
 
   const relativePosition: positionType = useMemo<positionType>(() => {
@@ -54,8 +56,9 @@ const DesignImage: FC<props> = ({ src, preview, initialHeight, initialWidth, ini
       design_x: relativeX,
       design_y: relativeY,
       design_file: originalFile,
+      design_rotation: rotation
     });
-  }, [cloth_side_id, setClothSide, scale, originalFile, canvasSize]);
+  }, [cloth_side_id, setClothSide, scale, originalFile, canvasSize, rotation]);
 
   const onTransformEnd = useCallback((e: KonvaEventObject<Event>) => {
     if (imgRef.current !== null) {
@@ -63,11 +66,17 @@ const DesignImage: FC<props> = ({ src, preview, initialHeight, initialWidth, ini
       const scaleX = img.scaleX();
       const scaleY = img.scaleY();
 
+      console.log(img.rotation());
+
       const width: number = Math.max(5, img.width() * scaleX);
       const height: number = Math.max(img.height() * scaleY);
 
       const relativeWidth = (width / canvasSize) * 100;
       const relativeHeight = (height / canvasSize) * 100;
+
+      const rotation: number = img.rotation();
+
+      setRotation(rotation);
 
       setClothSide!({
         cloth_side_id,
@@ -76,6 +85,7 @@ const DesignImage: FC<props> = ({ src, preview, initialHeight, initialWidth, ini
         design_x: coords.x,
         design_y: coords.y,
         design_file: originalFile,
+        design_rotation: rotation
       });
       // we will reset it back
       img.scaleX(1);
@@ -107,10 +117,10 @@ const DesignImage: FC<props> = ({ src, preview, initialHeight, initialWidth, ini
 
   return (
     preview ?
-      <Image draggable image={image} ref={imgRef} {...relativePosition} {...relativeScale} onTransformEnd={onTransformEnd} onDragEnd={onDragEnd} />
+      <Image draggable image={image} rotationDeg={rotation} ref={imgRef} {...relativePosition} {...relativeScale} onTransformEnd={onTransformEnd} onDragEnd={onDragEnd} />
       :
       <>
-        <Image draggable image={image} ref={imgRef} {...relativePosition} {...relativeScale} onTransformEnd={onTransformEnd} onDragEnd={onDragEnd} />
+        <Image draggable image={image} rotationDeg={rotation} ref={imgRef} {...relativePosition} {...relativeScale} onTransformEnd={onTransformEnd} onDragEnd={onDragEnd} />
         <Transformer ref={trRef} />
       </>
   )

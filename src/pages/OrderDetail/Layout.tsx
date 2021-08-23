@@ -36,7 +36,7 @@ const Layout: FC = (): ReactElement => {
 
   const getOrderSides = useCallback(() => {
     OrderClothSide.collection({
-      attributes: ['design_file', 'design_height', 'design_width', 'mockup_file', 'design_x', 'design_y', 'cloth_id', 'cloth_side_id', 'order_id'],
+      attributes: ['design_file', 'design_height', 'design_width', 'mockup_file', 'design_x', 'design_y', 'cloth_id', 'cloth_side_id', 'order_id', 'design_rotation'],
       where: {
         order_id: id
       },

@@ -48,7 +48,7 @@ const Editor: FC = (): ReactElement => {
   }, [cloth_sides]);
 
   return (
-    <EditorContext.Provider value={{ cloth_id, setClothId, setClothSide, cloth_sides, setClothSideId, cloth_side_id, setStep, step, color, setColor, setColorId, color_id, orderSuccess, setOrderSuccess }}>
+    <EditorContext.Provider value={{ cloth_id, setClothId, setClothSide, cloth_sides, setClothSideId, cloth_side_id, setStep, step, color, setColor, setColorId, color_id, orderSuccess, setOrderSuccess, setClothSides }}>
       <Layout />
     </EditorContext.Provider>
   )

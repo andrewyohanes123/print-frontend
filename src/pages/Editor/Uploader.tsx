@@ -27,7 +27,8 @@ const Uploader: FC = (): ReactElement => {
             design_y: 0,
             design_file: file.blobFile!,
             design_height: img.height * ratio,
-            design_width: img.width * ratio
+            design_width: img.width * ratio,
+            design_rotation: 0
           });
         }
         img.src = `${fileReader.result}`;
