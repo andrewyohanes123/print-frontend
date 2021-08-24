@@ -15,7 +15,7 @@ const AddPortfolio: FC<props> = ({ visible, onCancel, onOpen, onSubmit }): React
       <Modal show={visible} onHide={onCancel}>
         <Modal.Header>Tambah Portfolio</Modal.Header>
         <Modal.Body>
-          <Uploader listType="picture" multiple={false} accept="image/jpeg, image/png, image/jpg" autoUpload={false}>
+          <Uploader listType="picture" accept="image/png" autoUpload={false}>
             <Button>Pilih file gambar</Button>
           </Uploader>
         </Modal.Body>

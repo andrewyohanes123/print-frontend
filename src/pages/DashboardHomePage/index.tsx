@@ -1,11 +1,9 @@
 import { FC, ReactElement } from 'react'
-import Container from 'components/Container'
+import Layout from './Layout'
 
 const DashboardHomePage: FC = (): ReactElement => {
   return (
-    <Container>
-      <h3>Dashboard</h3>
-    </Container>
+    <Layout />
   )
 }
 

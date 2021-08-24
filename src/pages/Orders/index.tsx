@@ -1,5 +1,5 @@
 import { FC, ReactElement, useState, useEffect, useCallback, useMemo } from "react"
-import { FlexboxGrid, Input } from 'rsuite'
+import { Alert, FlexboxGrid, Input } from 'rsuite'
 import { ModelCollectionResult, OrderAttributes } from "types"
 import Container from "components/Container"
 import useModels from "hooks/useModels";
@@ -33,7 +33,14 @@ const Orders: FC = (): ReactElement => {
 
   useEffect(() => {
     getOrders();
-  }, [getOrders])
+  }, [getOrders]);
+
+  const deleteOrder = useCallback((order: OrderAttributes) => {
+    order.delete().then(resp => {
+      getOrders();
+      Alert.success(`Orderan atas nama ${resp.name} berhasil dihapus`);
+    }).catch(errorCatch);
+  }, [getOrders, errorCatch]);
 
   return (
     <>
@@ -46,7 +53,7 @@ const Orders: FC = (): ReactElement => {
           </FlexboxGrid.Item>
         </FlexboxGrid>
       </Container>
-      <Lists data={orders.rows} pagination={{ page, limit, total: orders.count, onSelect: setPage }} />
+      <Lists onDelete={deleteOrder} data={orders.rows} pagination={{ page, limit, total: orders.count, onSelect: setPage }} />
     </>
   )
 }

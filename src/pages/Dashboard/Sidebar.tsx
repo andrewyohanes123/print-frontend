@@ -23,7 +23,7 @@ const Sidebar: FC = (): ReactElement => {
       </Sidenav.Header>
       <Sidenav.Body>
         <Nav>
-          <Nav.Item eventKey={`${path}`} icon={<Icon icon="dashboard" />}>Dashboard</Nav.Item>
+          <Nav.Item eventKey={`${path}`} icon={<Icon icon="dashboard" />}>Halaman Utama</Nav.Item>
           <Nav.Item eventKey={`${path}/order`} icon={<Icon icon="order-form" />}>Order</Nav.Item>
           <Nav.Item eventKey={`${path}/kaos`} icon={<Icon icon="suitcase" />}>Pakaian</Nav.Item>
           <Nav.Item eventKey={`${path}/portfolio`} icon={<Icon icon="image" />}>Portfolio</Nav.Item>

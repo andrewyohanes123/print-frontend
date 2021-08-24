@@ -8,9 +8,10 @@ import OrderPanel from "./OrderPanel"
 interface props {
   data: OrderAttributes[];
   pagination: pagination;
+  onDelete: (order: OrderAttributes) => void;
 }
 
-const Lists: FC<props> = ({ data, pagination: { page, onSelect, total, limit } }): ReactElement => {
+const Lists: FC<props> = ({ data, pagination: { page, onSelect, total, limit }, onDelete }): ReactElement => {
 
   const totalPages: number | undefined = useMemo<number | undefined>(() => {
     if (typeof limit !== 'undefined' && typeof total !== 'undefined') {
@@ -26,7 +27,7 @@ const Lists: FC<props> = ({ data, pagination: { page, onSelect, total, limit } }
         <List style={{ padding: 12 }}>
           {
             data.map(order => (
-              <OrderPanel key={`${order.id}${order.name}`} order={order} />
+              <OrderPanel key={`${order.id}${order.name}`} onDelete={() => onDelete(order)} order={order} />
             ))
           }
         </List>
