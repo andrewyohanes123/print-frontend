@@ -45,6 +45,7 @@ const Portfolio: FC = (): ReactElement => {
                   </Col>
                 ))
                 :
+                porfolios.length > 0 ?
                 porfolios.map(portfolio => (
                   <Col key={portfolio.id.toString()} md={6}>
                     <Panel shaded bodyFill bordered>
@@ -52,13 +53,17 @@ const Portfolio: FC = (): ReactElement => {
                     </Panel>
                   </Col>
                 ))
+                :
+                <Col md={24}>
+                  <p className="secondary-text" style={{ textAlign: 'center' }}>Belum ada portfolio</p>
+                </Col>
             }
           </Row>
         </Grid>
       </List>
-      <Container>
+      {false && <Container>
         <Button block color="blue">Lihat Galeri</Button>
-      </Container>
+      </Container>}
     </>
   )
 }

@@ -11,9 +11,10 @@ interface props {
   pagination: pagination;
   loading?: boolean;
   onEdit: (cloth: ClothAttributes) => void;
+  onDelete: (cloth: ClothAttributes) => void;
 }
 
-const ClothList: FC<props> = ({ clothes, pagination: { total, limit, page, onSelect }, loading, onEdit }): ReactElement => {
+const ClothList: FC<props> = ({ clothes, pagination: { total, limit, page, onSelect }, loading, onEdit, onDelete }): ReactElement => {
   const { path } = useRouteMatch();
   const totalPages: number | undefined = useMemo<number | undefined>(() => {
     if (typeof limit !== 'undefined' && typeof total !== 'undefined') {
@@ -50,7 +51,7 @@ const ClothList: FC<props> = ({ clothes, pagination: { total, limit, page, onSel
                           </Whisper>
                           <Divider vertical />
                           <Whisper placement="topEnd" speaker={<Tooltip>Hapus {cloth.name}</Tooltip>}>
-                            <IconButton size="sm" color="red" icon={<Icon icon="trash" />} />
+                            <IconButton onClick={() => onDelete(cloth)} size="sm" color="red" icon={<Icon icon="trash" />} />
                           </Whisper>
                         </FlexboxGrid.Item>
                       </FlexboxGrid>

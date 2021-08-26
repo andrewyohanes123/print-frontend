@@ -64,10 +64,17 @@ const Layout: FC = (): ReactElement => {
     })
   },[errorCatch, Cloth, getClothes]);
 
+  const deleteCloth = useCallback((cloth: ClothAttributes ) => {
+    cloth.delete().then(resp => {
+      getClothes();
+      Alert.success(`Jenis pakaian ${resp.name} berhasil ditambah`);
+    }).catch(errorCatch);
+  }, [errorCatch, getClothes]);
+
   return (
     <>
       <AddClothModal onExited={() => setCloth(undefined)} cloth={cloth} onSubmit={cloth ? updateCloth : createCloth} />
-      <ClothList onEdit={setCloth} clothes={cloths.rows} loading={loading} pagination={{ limit, page, total: cloths.count, onSelect: setPage }} />
+      <ClothList onDelete={deleteCloth} onEdit={setCloth} clothes={cloths.rows} loading={loading} pagination={{ limit, page, total: cloths.count, onSelect: setPage }} />
     </>
   )
 }

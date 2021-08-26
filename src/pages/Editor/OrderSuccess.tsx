@@ -14,6 +14,7 @@ const OrderSuccess: FC = (): ReactElement => {
         <h4 style={{ textAlign: 'center' }}>
           {orderSuccess.order_number}
         </h4>
+        <p style={{textAlign: 'center'}} className="secondary-text" >Simpan nomor pesanan ini untuk melihat status pesanan</p>
         <Divider />
         <Button onClick={() => push('/')} block appearance="primary" >Kembali ke halaman utama</Button>
       </Panel>

@@ -56,11 +56,11 @@ const ClothSide: FC = (): ReactElement => {
       {loading ?
         <Loading />
         :
-        <List>
-          <Grid style={{ padding: 8 }}>
+        <List style={{ overflow: 'auto' }}>
+          <Grid fluid style={{ padding: 8 }}>
             <Row gutter={16}>
               {sides.map((side, idx) => (
-                <Col md={6} sm={12} key={side.id}>
+                <Col md={8} sm={12} key={side.id}>
                   <ClothSidePanel onClick={() => setClothSideId(side.id)} idx={idx} side={side} />
                 </Col>
               ))}
