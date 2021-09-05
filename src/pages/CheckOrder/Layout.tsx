@@ -21,7 +21,7 @@ const Layout: FC = (): ReactElement => {
   const getOrders = useCallback(() => {
     toggleLoading(true);
     Order.collection({
-      attributes: ['name', 'email', 'phone', 'status', 'updated_at', 'order_number', 'description'],
+      attributes: ['name', 'email', 'phone', 'status', 'updated_at', 'order_number', 'description', 'receipt_file'],
       where: {
         order_number: orderNumber
       }
@@ -52,7 +52,7 @@ const Layout: FC = (): ReactElement => {
                     <Message style={{ marginTop: 8 }} title="Pesanan Tidak Ditemukan" type="warning" description={`Pesanan dengan nomor ${notFoundQuery} tidak dapat ditemukan`} />
                     :
                     orders.map(order => (
-                      <OrderPanel order={order} key={`${order.id}`} />
+                      <OrderPanel publicView={true} order={order} key={`${order.id}`} />
                     ))
                   :
                   <></>
